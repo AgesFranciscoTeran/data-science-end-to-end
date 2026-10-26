@@ -1,0 +1,37 @@
+# Cada servicio corre un script y deja sus figuras y su salida de consola
+# (salida.txt) en una subcarpeta de data-contenedor.
+services:
+  eda:
+    build: .
+    image: semana08
+    container_name: semana08-eda
+    working_dir: /app
+    command: bash -o pipefail -c "python3 -u ./starter/EDA.py 2>&1 | tee ./starter/figuras/salida.txt"
+    volumes:
+      - ./data-contenedor/eda:/app/starter/figuras
+
+  ejercicio2:
+    image: semana08
+    container_name: semana08-ejercicio2
+    working_dir: /app/plantilla-ejercicio2
+    command: bash -o pipefail -c "python3 -u explorar_relaciones.py 2>&1 | tee figuras/salida.txt"
+    volumes:
+      - ./data-contenedor/ejercicio2:/app/plantilla-ejercicio2/figuras
+    depends_on:
+      eda:
+        condition: service_completed_successfully
+
+  # La primera vez baja los datos abiertos de Alibaba y arma ssd_mc1.csv en
+  # data-contenedor/proyecto; las siguientes lo reutiliza.
+  proyecto:
+    image: semana08
+    container_name: semana08-proyecto
+    working_dir: /salida
+    command: >
+      bash -o pipefail -c "{ { [ -f ssd_mc1.csv ] || python3 -u /app/plantilla-eda/preparar_datos.py; } &&
+      python3 -u /app/plantilla-eda/explorar_proyecto.py; } 2>&1 | tee salida.txt"
+    volumes:
+      - ./data-contenedor/proyecto:/salida
+    depends_on:
+      eda:
+        condition: service_completed_successfully

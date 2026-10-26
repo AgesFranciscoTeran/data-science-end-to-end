@@ -1,0 +1,12 @@
+Filas restantes: 2975
+             promedio  sin_propina
+metodo_pago                       
+efectivo     0.000000          888
+tarjeta      4.728762            0
+distancia_km    0.960204
+duracion_min    0.955923
+pasajeros      -0.051145
+propina         0.632852
+dtype: float64
+Viajes con pasajeros vacíos: 119
+Viajes con pasajeros 0: 19

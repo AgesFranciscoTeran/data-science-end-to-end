@@ -1,0 +1,116 @@
+Descargando ssd_failure_tag.csv.zip
+Descargando smart_log_20191231.csv.zip
+Descargando location_info_of_ssd.csv.zip
+Discos fallados que siguen reportando el 2019-12-31: 1487
+Guardado ssd_mc1.csv: 176902 filas, 10510 fallas
+Filas y columnas: (176902, 36)
+float64           31
+str                2
+int64              2
+datetime64[us]     1
+Name: count, dtype: int64
+Columnas con faltantes (proporcion):
+r_5          0.0
+n_5          0.0
+r_183        0.0
+n_183        0.0
+r_184        0.0
+n_184        0.0
+r_187        0.0
+n_187        0.0
+r_195        0.0
+n_195        0.0
+r_197        0.0
+n_197        0.0
+r_199        0.0
+n_199        0.0
+r_program    0.0
+n_program    0.0
+r_erase      0.0
+n_erase      0.0
+n_blocks     0.0
+n_wearout    0.0
+r_241        1.0
+n_241        1.0
+r_242        1.0
+n_242        1.0
+r_9          0.0
+n_9          0.0
+r_12         0.0
+n_12         0.0
+r_174        0.0
+n_174        0.0
+n_175        1.0
+dtype: float64
+             r_5        r_9       r_12  ...      r_187      r_199  n_wearout
+count  176897.00  176897.00  176897.00  ...  176898.00  176899.00  176898.00
+mean       10.88   17260.29      29.99  ...       7.72       6.17      95.66
+std       156.01    5015.04      72.90  ...     933.55     368.66       4.48
+min         0.00      11.00       1.00  ...       0.00       0.00       1.00
+25%         0.00   14573.00      19.00  ...       0.00       0.00      93.00
+50%         0.00   18207.00      25.00  ...       0.00       0.00      97.00
+75%         0.00   20700.00      32.00  ...       0.00       0.00     100.00
+max      9071.00   25808.00   19986.00  ...  286578.00   82874.00     100.00
+
+[8 rows x 7 columns]
+failure
+0    166392
+1     10510
+Name: count, dtype: int64
+Proporcion de fallas: 5.94%
+r_5: Q1=0.0, Q3=0.0, IQR=0.0
+Atipicos de r_5 segun IQR: 43281 (24.47%)
+Tasa de falla dentro de los atipicos: 10.11% vs todos: 5.94%
+    disk_id  app   r_5  failure
+2     88935   RM   8.0        1
+4     31397  WSM   2.0        1
+7     20953  WSM   3.0        1
+8     81608  DAE   7.0        1
+10   114525  WSM  11.0        1
+21     2392  WSM   3.0        1
+22    44327  WSM   9.0        1
+24   155721  WSM  14.0        1
+36   152664   RM  12.0        1
+37    96811  WSM   1.0        1
+            mean   count
+r_5                     
+0       0.045863  133616
+1-10    0.061881   36958
+11-100  0.305828    4993
+>100    0.423308    1330
+r_9         -0.161
+r_5          0.076
+n_5         -0.072
+n_blocks    -0.069
+r_187        0.030
+r_197        0.029
+n_184       -0.028
+n_wearout    0.027
+r_199        0.015
+r_12        -0.013
+dtype: float64
+failure
+0    18348.0
+1    15042.0
+Name: r_9, dtype: float64
+fecha_smart
+2018    1964
+2019    8546
+Name: count, dtype: int64
+           r_5  r_187  r_197  r_199
+failure                            
+0        0.234  0.001  0.000  0.013
+1        0.416  0.116  0.002  0.017
+Columnas 100 % vacias: ['r_241', 'n_241', 'r_242', 'n_242', 'n_175']
+Columnas con un solo valor: ['n_183', 'n_187', 'n_195', 'n_197', 'n_199', 'n_9', 'n_12', 'n_174']
+       mean  count
+app               
+DB    0.018    811
+WPS   0.022  21698
+WS    0.026    390
+NAS   0.046  11300
+none  0.055  25957
+WSM   0.068  97707
+DAE   0.072   8476
+RM    0.078  10335
+SS    0.079    228

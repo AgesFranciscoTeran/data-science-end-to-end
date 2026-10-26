@@ -36,3 +36,6 @@ derby.log
 
 # Material reemplazado (no se sube)
 _to_delete/
+
+# Dataset del proyecto que arma preparar_datos.py (Semana 8): se regenera
+ssd_mc1.csv

@@ -1,0 +1,84 @@
+Analisis exploratorio descriptivo
+<class 'pandas.DataFrame'>
+RangeIndex: 3000 entries, 0 to 2999
+Data columns (total 10 columns):
+ #   Column             Non-Null Count  Dtype  
+---  ------             --------------  -----  
+ 0   id_viaje           3000 non-null   int64  
+ 1   fecha_hora_inicio  3000 non-null   str    
+ 2   zona_origen        3000 non-null   str    
+ 3   zona_destino       3000 non-null   str    
+ 4   distancia_km       3000 non-null   float64
+ 5   duracion_min       3000 non-null   float64
+ 6   pasajeros          2880 non-null   float64
+ 7   metodo_pago        2940 non-null   str    
+ 8   tarifa             3000 non-null   float64
+ 9   propina            3000 non-null   float64
+dtypes: float64(5), int64(1), str(4)
+memory usage: 234.5 KB
+id_viaje               int64
+fecha_hora_inicio        str
+zona_origen              str
+zona_destino             str
+distancia_km         float64
+duracion_min         float64
+pasajeros            float64
+metodo_pago              str
+tarifa               float64
+propina              float64
+dtype: object
+id_viaje               0
+fecha_hora_inicio      0
+zona_origen            0
+zona_destino           0
+distancia_km           0
+duracion_min           0
+pasajeros            120
+metodo_pago           60
+tarifa                 0
+propina                0
+dtype: int64
+0
+          id_viaje  distancia_km  ...       tarifa      propina
+count  3000.000000   3000.000000  ...  3000.000000  3000.000000
+mean   1500.500000      8.440113  ...    31.386757     3.285143
+std     866.169729      7.161517  ...    70.987456     3.632981
+min       1.000000      0.000000  ...     1.600000     0.000000
+25%     750.750000      3.740000  ...    13.990000     0.000000
+50%    1500.500000      6.730000  ...    22.600000     2.480000
+75%    2250.250000     10.512500  ...    32.552500     4.792500
+max    3000.000000     45.430000  ...   999.990000    17.490000
+
+[8 rows x 6 columns]
+      id_viaje fecha_hora_inicio      zona_origen  ... metodo_pago  tarifa  propina
+2            3  2026-09-17 19:37  Upper East Side  ...     tarjeta   70.00     7.46
+3            4  2026-10-04 18:09           Harlem  ...     tarjeta   70.00     8.36
+23          24  2026-10-22 07:06  Upper East Side  ...     tarjeta   70.00    15.24
+38          39  2026-09-23 14:46  Upper East Side  ...    efectivo   70.00     0.00
+40          41  2026-10-02 19:55          Midtown  ...     tarjeta   70.00    17.49
+...        ...               ...              ...  ...         ...     ...      ...
+2945      2946  2026-09-10 21:53      JFK Airport  ...    efectivo   70.00     0.00
+2965      2966  2026-09-05 14:47      JFK Airport  ...    efectivo   70.00     0.00
+2973      2974  2026-10-11 14:26          Midtown  ...    efectivo  999.99     0.00
+2989      2990  2026-09-20 14:18      JFK Airport  ...     tarjeta   70.00     9.97
+2995      2996  2026-10-11 17:06      JFK Airport  ...     tarjeta   70.00    12.98
+
+[334 rows x 10 columns]
+              id_viaje  distancia_km  ...    tarifa   propina
+id_viaje      1.000000      0.001668  ...  0.020939  0.027014
+distancia_km  0.001668      1.000000  ...  0.228684  0.590611
+duracion_min  0.007331      0.934470  ...  0.228192  0.587242
+pasajeros     0.021906     -0.047677  ...  0.005098 -0.065213
+tarifa        0.020939      0.228684  ...  1.000000  0.156754
+propina       0.027014      0.590611  ...  0.156754  1.000000
+
+[6 rows x 6 columns]
+              id_viaje  distancia_km  ...    tarifa   propina
+id_viaje      1.000000      0.024090  ...  0.025126  0.013505
+distancia_km  0.024090      1.000000  ...  0.970654  0.515220
+duracion_min  0.027896      0.891807  ...  0.932089  0.497346
+pasajeros     0.017613     -0.001143  ... -0.011372 -0.043590
+tarifa        0.025126      0.970654  ...  1.000000  0.536329
+propina       0.013505      0.515220  ...  0.536329  1.000000
+
+[6 rows x 6 columns]
