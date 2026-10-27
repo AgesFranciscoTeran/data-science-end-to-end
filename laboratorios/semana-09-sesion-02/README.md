@@ -18,6 +18,22 @@ Este laboratorio usa `sparse_output=False` en `OneHotEncoder`, disponible desde 
 
 Ten a mano el script de features de tu proyecto de la sesión pasada.
 
+### Cómo correr los scripts
+
+Localmente, cada uno desde su carpeta:
+
+```
+cd starter && python3 ejercicio1_fuga.py
+cd starter && python3 ejercicio2_pipeline.py
+cd plantilla-pipeline && python3 pipeline_proyecto.py
+```
+
+O con Docker, igual que en la Semana 9, Sesión 1 (cada servicio deja su `salida.txt` en `data-contenedor/<servicio>`). La imagen fija las mismas versiones del `requirements.txt` de la raíz. El servicio `proyecto` lee el `ssd_mc1.csv` que dejó la Semana 8 en `../semana-08-sesion-02/data-contenedor/proyecto`:
+
+```
+docker compose up --build
+```
+
 ## Antes de empezar
 
 A partir de la lectura previa:

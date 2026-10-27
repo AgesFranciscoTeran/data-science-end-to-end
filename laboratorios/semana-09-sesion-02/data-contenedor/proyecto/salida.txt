@@ -1,0 +1,3 @@
+Tasa de falla: entrenamiento 0.0594, prueba 0.0594
+Entrenamiento: (141520, 22) Prueba: (35380, 22)
+['numericas__n_contadores_error', 'numericas__log_r_5', 'numericas__r_183', 'numericas__r_184', 'numericas__r_187', 'numericas__r_195', 'numericas__r_197', 'numericas__r_199', 'numericas__r_program', 'numericas__r_erase', 'numericas__n_wearout', 'numericas__r_12', 'numericas__r_174', 'categoricas__app_DAE', 'categoricas__app_DB', 'categoricas__app_NAS', 'categoricas__app_RM', 'categoricas__app_SS', 'categoricas__app_WPS', 'categoricas__app_WS', 'categoricas__app_WSM', 'categoricas__app_none']

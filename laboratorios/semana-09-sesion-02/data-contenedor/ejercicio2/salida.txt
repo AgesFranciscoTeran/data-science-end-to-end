@@ -1,0 +1,17 @@
+Entrenamiento: (2380, 25) Prueba: (595, 25)
+  numericas: 2 columnas
+  ya_listas: 5 columnas
+  categoricas: 18 columnas
+Medianas aprendidas:    {'distancia_km': 6.94, 'pasajeros': 1.0}
+Medianas entrenamiento: {'distancia_km': 6.94, 'pasajeros': 1.0}
+Medianas todo el dataset: {'distancia_km': 6.93, 'pasajeros': 1.0}
+Columnas de zona_origen: ['categoricas__zona_origen_Brooklyn', 'categoricas__zona_origen_Harlem', 'categoricas__zona_origen_JFK Airport', 'categoricas__zona_origen_Lower Manhattan', 'categoricas__zona_origen_Midtown', 'categoricas__zona_origen_Queens', 'categoricas__zona_origen_Upper East Side', 'categoricas__zona_origen_Upper West Side']
+Columnas de zona_origen en 1 para el viaje desde el Bronx: 0
+Columnas categoricas en 1 en el viaje: 2 (zona_destino y metodo_pago)
+
+Comprobacion
+TODO 1: OK
+TODO 2: OK
+TODO 3: OK
+TODO 4: OK
+TODO 5: OK

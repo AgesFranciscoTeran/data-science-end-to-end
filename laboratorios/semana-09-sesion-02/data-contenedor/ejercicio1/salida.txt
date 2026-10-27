@@ -1,0 +1,10 @@
+Version del companero
+Filas que vio el escalador: 2975
+Media de distancia usada para escalar: 8.5034
+Error absoluto medio en prueba: 2.5375
+
+Version correcta
+Filas que vio el escalador: 2380
+Media de distancia usada para escalar: 8.5576
+Filas de prueba: 595
+Error absoluto medio en prueba: 2.5373

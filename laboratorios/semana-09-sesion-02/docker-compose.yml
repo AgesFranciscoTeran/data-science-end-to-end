@@ -1,0 +1,36 @@
+# Cada servicio corre un script y deja su salida de consola (salida.txt) en
+# una subcarpeta de data-contenedor.
+services:
+  ejercicio1:
+    build: .
+    image: semana09-2
+    container_name: semana09-2-ejercicio1
+    working_dir: /app/starter
+    command: bash -o pipefail -c "python3 -u ejercicio1_fuga.py 2>&1 | tee /salida/salida.txt"
+    volumes:
+      - ./data-contenedor/ejercicio1:/salida
+
+  ejercicio2:
+    image: semana09-2
+    container_name: semana09-2-ejercicio2
+    working_dir: /app/starter
+    command: bash -o pipefail -c "python3 -u ejercicio2_pipeline.py 2>&1 | tee /salida/salida.txt"
+    volumes:
+      - ./data-contenedor/ejercicio2:/salida
+    depends_on:
+      ejercicio1:
+        condition: service_completed_successfully
+
+  # Lee el ssd_mc1.csv que armo el servicio proyecto de la Semana 8, montado
+  # en la misma ruta relativa que se usa fuera del contenedor.
+  proyecto:
+    image: semana09-2
+    container_name: semana09-2-proyecto
+    working_dir: /app/plantilla-pipeline
+    command: bash -o pipefail -c "python3 -u pipeline_proyecto.py 2>&1 | tee /salida/salida.txt"
+    volumes:
+      - ./data-contenedor/proyecto:/salida
+      - ../semana-08-sesion-02/data-contenedor/proyecto:/semana-08-sesion-02/data-contenedor/proyecto:ro
+    depends_on:
+      ejercicio1:
+        condition: service_completed_successfully
