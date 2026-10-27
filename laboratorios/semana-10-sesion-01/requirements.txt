@@ -1,0 +1,5 @@
+# Las mismas versiones del requirements.txt de la raiz del repositorio: con
+# otras, la regresion de grado 3 de la Semana 10 da otro numero.
+numpy==1.26.4
+pandas==2.2.2
+scikit-learn==1.5.2

@@ -1,0 +1,38 @@
+# Cada servicio corre un script y deja en una subcarpeta de data-contenedor
+# su salida de consola (salida.txt) y la tabla de resultados que escribe.
+services:
+  ejercicio1:
+    build: .
+    image: semana10-1
+    container_name: semana10-1-ejercicio1
+    working_dir: /app/starter
+    command: bash -o pipefail -c "python3 -u ejercicio1_linea_base_y_ensamblaje.py 2>&1 | tee /salida/salida.txt && cp resultados_ejercicio1.csv /salida/"
+    volumes:
+      - ./data-contenedor/ejercicio1:/salida
+
+  ejercicio2:
+    image: semana10-1
+    container_name: semana10-1-ejercicio2
+    working_dir: /app/starter
+    command: bash -o pipefail -c "python3 -u ejercicio2_regularizacion.py 2>&1 | tee /salida/salida.txt && cp resultados_ejercicio2.csv /salida/"
+    volumes:
+      - ./data-contenedor/ejercicio2:/salida
+    depends_on:
+      ejercicio1:
+        condition: service_completed_successfully
+
+  # modelos_proyecto.py importa el pipeline de la Semana 9, Sesion 2, que a su
+  # vez lee el ssd_mc1.csv de la Semana 8: ambos se montan en las mismas rutas
+  # relativas que se usan fuera del contenedor.
+  proyecto:
+    image: semana10-1
+    container_name: semana10-1-proyecto
+    working_dir: /app/proyecto
+    command: bash -o pipefail -c "python3 -u modelos_proyecto.py 2>&1 | tee /salida/salida.txt && cp resultados_proyecto.csv /salida/"
+    volumes:
+      - ./data-contenedor/proyecto:/salida
+      - ../semana-09-sesion-02/plantilla-pipeline:/semana-09-sesion-02/plantilla-pipeline:ro
+      - ../semana-08-sesion-02/data-contenedor/proyecto:/semana-08-sesion-02/data-contenedor/proyecto:ro
+    depends_on:
+      ejercicio1:
+        condition: service_completed_successfully

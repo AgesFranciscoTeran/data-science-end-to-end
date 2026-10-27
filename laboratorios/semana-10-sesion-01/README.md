@@ -10,6 +10,22 @@
 
 Nada nuevo que instalar: todo lo de hoy está en scikit-learn, que ya usaste la sesión pasada. Ten a mano el pipeline de tu proyecto de la Semana 9, Sesión 2.
 
+### Cómo correr los scripts
+
+Localmente, cada uno desde su carpeta:
+
+```
+cd starter && python3 ejercicio1_linea_base_y_ensamblaje.py
+cd starter && python3 ejercicio2_regularizacion.py
+cd proyecto && python3 modelos_proyecto.py
+```
+
+O con Docker, igual que en la Semana 9 (cada servicio deja su `salida.txt` y su tabla de resultados en `data-contenedor/<servicio>`). La imagen fija las mismas versiones del `requirements.txt` de la raíz, así que la regresión de grado 3 da el mismo número que en el Codespace. El servicio `proyecto` importa el pipeline de la Semana 9, Sesión 2, y lee el `ssd_mc1.csv` de la Semana 8:
+
+```
+docker compose up --build
+```
+
 ## Antes de empezar
 
 A partir de la lectura previa:
@@ -87,7 +103,7 @@ python3 ejercicio2_regularizacion.py
 
 **Respuesta 1:** ¿cuántas columnas recibe la regresión con interacciones de grado 3, y cuántas filas de entrenamiento hay? ¿Qué tiene que ver esa comparación con el error en prueba que obtuviste?
 
-Recibe **3275 columnas** y hay **2380 filas** de entrenamiento: más coeficientes que datos. Con eso, la regresión tiene infinitas soluciones que pasan casi exactamente por cada viaje de entrenamiento (error 0.90), y la que elige puede tener coeficientes enormes que se cancelan entre sí en entrenamiento pero no en viajes nuevos. Por eso el error en prueba explota: **3 212 929 068.79** con las versiones del curso (scikit-learn 1.5.2, numpy 1.26.4). Con scikit-learn 1.8 / numpy 2.3 en mi laptop la solución numérica es otra y da 22.99 (por eso, fuera del ambiente del curso, el Paso 2 marca `revisa`: su brecha queda en 22, no >100). En ambos casos es peor que la línea base.
+Recibe **3275 columnas** y hay **2380 filas** de entrenamiento: más coeficientes que datos. Con eso, la regresión tiene infinitas soluciones que pasan casi exactamente por cada viaje de entrenamiento (error 0.90), y la que elige puede tener coeficientes enormes que se cancelan entre sí en entrenamiento pero no en viajes nuevos. Por eso el error en prueba explota: **3 212 929 068.79** con las versiones del curso (scikit-learn 1.5.2, numpy 1.26.4), confirmado con `docker compose up --build` dentro del dev container, donde los 5 pasos dan `OK`. Con scikit-learn 1.8 / numpy 2.3 en mi laptop la solución numérica es otra y da 22.99 (por eso, fuera del ambiente del curso, el Paso 2 marca `revisa`: su brecha queda en 22, no >100). En ambos casos es peor que la línea base.
 
 **Respuesta 2:** ¿qué cambió entre `lineal grado 3` y `ridge grado 3` en el error de entrenamiento, y qué cambió en el de prueba? ¿Por qué Ridge empeora un poco en entrenamiento?
 

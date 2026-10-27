@@ -1,0 +1,18 @@
+linea base                         entrenamiento 13.1998   prueba 12.5308
+lineal grado 3                     entrenamiento  0.8995   prueba 3212929068.7853
+Columnas con interacciones de grado 3: 3275   filas de entrenamiento: 2380
+ridge grado 3                      entrenamiento  1.0272   prueba 1.3209
+gradient boosting                  entrenamiento  1.0705   prueba 1.2754
+
+           modelo  mae_entrenamiento   mae_prueba        brecha  segundos
+       linea base            13.1998 1.253080e+01 -6.690000e-01     0.016
+   lineal grado 3             0.8995 3.212929e+09  3.212929e+09    63.781
+    ridge grado 3             1.0272 1.320900e+00  2.938000e-01     1.391
+gradient boosting             1.0705 1.275400e+00  2.048000e-01     0.324
+
+Comprobacion
+Paso 1: OK
+Paso 2: OK
+Paso 3: OK
+Paso 4: OK
+Paso 5: OK
