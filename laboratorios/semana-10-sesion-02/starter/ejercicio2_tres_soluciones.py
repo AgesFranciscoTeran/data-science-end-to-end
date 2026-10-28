@@ -98,15 +98,15 @@ def escribir_prompt():
 
 
 # TODO 1: la red neuronal del Ejercicio 1, con el nombre "red neuronal".
-red = None
+red = evaluar("red neuronal", MLPRegressor(hidden_layer_sizes=(64,), max_iter=1000, random_state=42))
 
 # TODO 2: el ensamblaje del Ejercicio 1, con el nombre "gradient boosting".
-ensamblaje = None
+ensamblaje = evaluar("gradient boosting", GradientBoostingRegressor(random_state=42))
 
 # TODO 3: mae_red_muestra y mae_ensamblaje_muestra, el error absoluto
 # medio de cada modelo sobre los 20 viajes de muestra.
-mae_red_muestra = None
-mae_ensamblaje_muestra = None
+mae_red_muestra = mean_absolute_error(y_muestra, red.predict(muestra))
+mae_ensamblaje_muestra = mean_absolute_error(y_muestra, ensamblaje.predict(muestra))
 
 prompt = escribir_prompt()
 print()
@@ -116,14 +116,42 @@ print("prompt_llm.txt escrito:", len(prompt), "caracteres")
 # y mae_llm, su error absoluto medio sobre los mismos 20 viajes.
 predicciones_llm = None
 mae_llm = None
+if os.path.exists("respuestas_llm.txt"):
+    with open("respuestas_llm.txt") as archivo:
+        predicciones_llm = [
+            float(linea.strip().replace("$", "").replace(",", "."))
+            for linea in archivo
+            if linea.strip()
+        ]
+    if len(predicciones_llm) == 20:
+        mae_llm = mean_absolute_error(y_muestra, predicciones_llm)
+    else:
+        print(f"respuestas_llm.txt tiene {len(predicciones_llm)} numeros; deben ser 20")
+else:
+    print("Falta respuestas_llm.txt: pega prompt_llm.txt en el LLM y guarda sus 20 numeros")
 
 # Paso 5: el costo de estimar 10 000 viajes al mes con el LLM, en
 # dolares, en costo_10000. Busca en la pagina de precios del proveedor
 # que usaste el precio por millon de tokens de entrada y anotalo abajo.
 # Cuenta un token cada 4 caracteres, y un prompt como este por cada 20
 # viajes; ignora los tokens de salida.
-PRECIO_POR_MILLON_DE_TOKENS = None
-costo_10000 = None
+# Claude Opus 5.5, entrada: USD 4 por millon de tokens
+# (https://platform.claude.com/docs/en/about-claude/pricing).
+# Cambialo si usaste otro modelo.
+PRECIO_POR_MILLON_DE_TOKENS = 10.00
+
+tokens_por_prompt = len(prompt) / 4
+prompts_al_mes = 10_000 / 20
+costo_10000 = tokens_por_prompt * prompts_al_mes / 1_000_000 * PRECIO_POR_MILLON_DE_TOKENS
+
+print(f"Tokens por prompt: {tokens_por_prompt:.0f}")
+print(f"Costo mensual (10 000 viajes): ${costo_10000:.4f}")
+
+print()
+print("MAE sobre los 20 viajes de muestra")
+print(f"  red neuronal       {mae_red_muestra:.4f}")
+print(f"  gradient boosting  {mae_ensamblaje_muestra:.4f}")
+print(f"  LLM                {mae_llm:.4f}" if mae_llm is not None else "  LLM                pendiente")
 
 
 def comprobar(numero, condicion):
