@@ -22,8 +22,8 @@ jupyter kernelspec list | sed -n '/python3/s/^ */kernel de notebooks: /p'
 python -m mlflow --version
 # El servidor de MLflow se levanta al iniciar el contenedor, despues de esta
 # verificacion: al crear el Codespace es normal que todavia no responda.
-if curl -fsS "${MLFLOW_TRACKING_URI:-http://127.0.0.1:5000}/health" >/dev/null 2>&1; then
-  echo "servidor de MLflow: responde en ${MLFLOW_TRACKING_URI:-http://127.0.0.1:5000}"
+if curl -fsS "${MLFLOW_TRACKING_URI:-http://127.0.0.1:5050}/health" >/dev/null 2>&1; then
+  echo "servidor de MLflow: responde en ${MLFLOW_TRACKING_URI:-http://127.0.0.1:5050}"
 else
   echo "servidor de MLflow: no responde todavia (se levanta solo al iniciar; a mano: bash .devcontainer/mlflow-server.sh)"
 fi

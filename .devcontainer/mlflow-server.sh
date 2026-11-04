@@ -16,7 +16,9 @@
 # esta en .gitignore: el registro no se sube a git.
 set -euo pipefail
 
-PUERTO=5000
+# 5050 y no 5000 (el puerto de los ejemplos de MLflow): en macOS el 5000 lo ocupa
+# el Receptor AirPlay, y con Dev Containers en local localhost:5000 respondia 403.
+PUERTO=5050
 RAIZ="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 DATOS="$RAIZ/.mlflow"
 URL="http://127.0.0.1:$PUERTO"

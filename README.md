@@ -29,7 +29,7 @@ Cinco reglas para no quedarte sin cuota ni perder trabajo:
 - **Haz commit y push seguido.** Un Codespace sin usar durante 30 días se borra con todo lo que no hayas subido a tu fork.
 - **Tus datos no se suben a git** (`data/raw/` y `data/processed/` están en `.gitignore`). Guarda la fuente original de tu dataset fuera del Codespace (el enlace de descarga, o una copia en tu Drive), para poder volver a traerlo si el Codespace se borra.
 - **Usa una máquina de 4 núcleos solo cuando el laboratorio lo pida.** Kestra (Semana 4, Sesión 1) y el laboratorio integrador (Semana 7, Sesión 1) levantan varios servicios a la vez; ahí cambia el tipo de máquina ("Change machine type"). El resto del curso funciona con 2 núcleos, que gasta la mitad de la cuota.
-- **Las interfaces web no se abren en el `localhost` de tu navegador.** pgAdmin (puerto 8085), Kestra (puerto 8080) y MLflow (puerto 5000) corren dentro del Codespace: ábrelas desde la pestaña **Ports** de VS Code, con el ícono del globo junto al puerto. El servidor de MLflow se levanta solo cada vez que inicia el Codespace; si no responde, `bash .devcontainer/mlflow-server.sh` lo vuelve a levantar.
+- **Las interfaces web no se abren en el `localhost` de tu navegador.** pgAdmin (puerto 8085), Kestra (puerto 8080) y MLflow (puerto 5050) corren dentro del Codespace: ábrelas desde la pestaña **Ports** de VS Code, con el ícono del globo junto al puerto. El servidor de MLflow se levanta solo cada vez que inicia el Codespace; si no responde, `bash .devcontainer/mlflow-server.sh` lo vuelve a levantar.
 
 ### Opción B: tu propia laptop
 
