@@ -14,7 +14,9 @@ pandas y matplotlib, de la sesión pasada. numpy se instala junto con pandas; ve
 python3 -c "import numpy; print(numpy.__version__)"
 ```
 
-Ten a mano tus 3 hallazgos de la exploración de la Semana 8, Sesión 2: las features de hoy salen de ahí.
+Ten a mano tu notebook de exploración de la Semana 8, Sesión 2: las features de hoy salen de tus 3 hallazgos.
+
+Los laboratorios de hoy siguen siendo notebooks: diseñar una feature es probar varias ideas y mirar cuál aporta. La próxima sesión, las features que se queden pasan a un script, que es lo que corre en producción.
 
 ### Cómo correr los scripts
 
@@ -52,12 +54,7 @@ Creando columnas derivadas que codifiquen la regla: `es_tarifa_fija` (1 si el vi
 
 ## Ejercicio 1: features de fecha y hora
 
-Archivo: [`starter/ejercicio1_features_tiempo.py`](./starter/ejercicio1_features_tiempo.py), sobre [`starter/viajes_taxi.csv`](./starter/viajes_taxi.csv), el mismo dataset de la sesión pasada. El script ya quita los errores confirmados, convierte `fecha_hora_inicio` y compara la tarifa por kilómetro según la hora pico; faltan 4 `TODO`: hora, día de la semana, fin de semana, hora pico y la hora como ciclo. Córrelo una vez antes de tocar nada:
-
-```
-cd laboratorios/semana-09-sesion-01/starter
-python3 ejercicio1_features_tiempo.py
-```
+Notebook: [`starter/ejercicio1_features_tiempo.ipynb`](./starter/ejercicio1_features_tiempo.ipynb), sobre [`starter/viajes_taxi.csv`](./starter/viajes_taxi.csv), el mismo dataset de la sesión pasada. Ya quita los errores confirmados, convierte `fecha_hora_inicio` y compara la tarifa por kilómetro según la hora pico; faltan 4 `TODO`: hora, día de la semana, fin de semana, hora pico y la hora como ciclo. Córrelo completo una vez antes de tocar nada (**Run All**).
 
 **Respuesta 1 (TODO 4), antes de ver la solución:** si dejas la hora como un número del 0 al 23, ¿qué tan lejos queda la hora 23 de la hora 0 para un modelo que mide distancias entre números? ¿Y en el reloj?
 
@@ -102,11 +99,7 @@ _(tu respuesta)_
 
 ## Ejercicio 2: zona, codificación y disponibilidad
 
-Solo o en pareja. Archivo: [`starter/ejercicio2_features_zona.py`](./starter/ejercicio2_features_zona.py), sobre el mismo `viajes_taxi.csv`. Completa los 4 `TODO`. Al final, el script imprime una comprobación por TODO: complétalos hasta que todas digan `OK`.
-
-```
-python3 ejercicio2_features_zona.py
-```
+Solo o en pareja. Notebook: [`starter/ejercicio2_features_zona.ipynb`](./starter/ejercicio2_features_zona.ipynb), sobre el mismo `viajes_taxi.csv`. Completa los 4 `TODO`. La última celda imprime una comprobación por TODO: complétalos hasta que todas digan `OK`.
 
 **Respuesta 1:** ¿cuántos viajes tienen `es_tarifa_fija` en 1, y qué tarifa mínima y máxima tienen? ¿Qué te dice eso sobre lo que un modelo lineal puede aprender con esta columna?
 
@@ -122,7 +115,7 @@ One-hot crea 8 columnas (una por zona); la ordinal crea 1 (Brooklyn=0, Harlem=1,
 
 ## Ejercicio 3: dos features para tu proyecto
 
-Usa el mismo archivo de la exploración de la Semana 8 y la plantilla [`plantilla-features/features_proyecto.py`](./plantilla-features/features_proyecto.py).
+Usa el mismo archivo de tu exploración de la Semana 8 y copia la plantilla [`plantilla-features/features_proyecto.ipynb`](./plantilla-features/features_proyecto.ipynb) a la carpeta de tu proyecto. Todo lo que pide este ejercicio queda en el notebook: el código de cada feature, la evidencia y la justificación en las celdas de texto.
 
 ### Paso 1: el momento de la predicción (5 minutos)
 
@@ -145,9 +138,9 @@ Antes se quitan 2 filas de fallas sin ninguna lectura SMART.
 
 ### Paso 3: justifica cada feature (5 minutos)
 
-Para cada una: de qué hallazgo o conocimiento del dominio sale, qué evidencia muestra que aporta (una correlación, una diferencia de promedios), y por qué existe en el momento de predecir. Si alguna es categórica, di qué codificación usarías según el modelo que planeas entrenar.
+Debajo de cada feature: de qué hallazgo o conocimiento del dominio sale, qué evidencia muestra que aporta, y por qué existe en el momento de predecir. Si alguna es categórica, di qué codificación usarías según el modelo que planeas entrenar. Antes de hacer commit, reinicia el kernel y corre todo.
 
-**Feature 1:**
+**Ruta de tu notebook de features en tu fork:**
 
 `n_contadores_error` sale del Hallazgo 2 de la Semana 8: lo que separa a las clases no es el valor promedio de los contadores de error, sino que dejen de ser 0 (r_187 > 0 en 11.6 % de los fallados contra 0.1 % de los sanos). En el dominio, cada contador mide un mecanismo de degradación distinto (sectores reasignados, errores incorregibles, lecturas pendientes, errores de interfaz), y que varios se activen a la vez es señal de que el disco se está muriendo. Evidencia, tasa de falla por valor:
 
