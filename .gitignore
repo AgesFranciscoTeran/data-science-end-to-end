@@ -34,7 +34,9 @@ spark-warehouse/
 metastore_db/
 derby.log
 
-# Registro local de MLflow (cada estudiante lo regenera al correr; puede pesar decenas de MB)
+# Registro de MLflow: el del servidor del Codespace (.mlflow/) y el local si trabajas
+# sin servidor (mlruns/). Cada estudiante lo regenera al correr; pesa decenas de MB.
+.mlflow/
 mlruns/
 mlartifacts/
 
