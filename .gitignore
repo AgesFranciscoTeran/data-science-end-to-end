@@ -34,5 +34,9 @@ spark-warehouse/
 metastore_db/
 derby.log
 
+# Registro local de MLflow (cada estudiante lo regenera al correr; puede pesar decenas de MB)
+mlruns/
+mlartifacts/
+
 # Material reemplazado (no se sube)
 _to_delete/

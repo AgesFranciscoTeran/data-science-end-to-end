@@ -58,7 +58,10 @@
       ],
       "settings": {
         "python.defaultInterpreterPath": "/usr/local/bin/python",
-        "python.terminal.activateEnvironment": false
+        "python.terminal.activateEnvironment": false,
+        // Cada notebook corre desde su propia carpeta: pd.read_csv("datos.csv")
+        // y "from preparacion_taxis import ..." encuentran los archivos de al lado.
+        "jupyter.notebookFileRoot": "${fileDirname}"
       }
     }
   },

@@ -17,6 +17,8 @@ import duckdb, kafka, matplotlib, pandas, pyspark, sklearn
 print(f"pandas {pandas.__version__} | duckdb {duckdb.__version__} | pyspark {pyspark.__version__}")
 print(f"scikit-learn {sklearn.__version__} | matplotlib {matplotlib.__version__} | kafka-python {kafka.__version__}")
 PY
+jupyter lab --version | sed -n '1s/^/jupyterlab /p'
+jupyter kernelspec list | sed -n '/python3/s/^ */kernel de notebooks: /p'
 
 echo
 echo "Ambiente listo. Si algo de lo anterior fallo, avisame antes de la proxima sesion."
