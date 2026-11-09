@@ -36,3 +36,70 @@ jobs:
             exit 0
           fi
           exit "$codigo"
+
+  # Semana 11: los laboratorios son notebooks. Se ejecutan de principio a fin;
+  # si una celda lanza un error, el paso falla. Sin MLFLOW_TRACKING_URI, MLflow
+  # guarda las corridas en una carpeta mlruns al lado de cada notebook.
+  semana-11:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Instalar las librerias del curso
+        run: pip install -r requirements.txt
+
+      - name: "Sesion 1: registrar corridas y comparar (en ese orden: el 2 lee las corridas del 1)"
+        working-directory: laboratorios/semana-11-sesion-01/starter
+        run: |
+          for notebook in ejercicio1_registrar_corridas.ipynb ejercicio2_comparar_y_elegir.ipynb; do
+            jupyter nbconvert --to notebook --execute --ExecutePreprocessor.timeout=900 --output-dir /tmp/semana-11-sesion-01 "$notebook"
+          done
+
+      - name: "Sesion 2: validacion y umbral de fraude"
+        working-directory: laboratorios/semana-11-sesion-02/starter
+        run: |
+          for notebook in ejercicio1_validacion.ipynb ejercicio2_fraude_y_umbral.ipynb; do
+            jupyter nbconvert --to notebook --execute --ExecutePreprocessor.timeout=900 --output-dir /tmp/semana-11-sesion-02 "$notebook"
+          done
+
+  # Semana 12: los laboratorios son scripts con sus pruebas. Cada ejercicio
+  # entrena su modelo (el .joblib no se sube), corre el script y sus pruebas.
+  # La Sesion 2 se agrega aqui cuando este resuelta.
+  semana-12:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Instalar las librerias del curso
+        run: pip install -r requirements.txt
+
+      - name: "Sesion 1, ejercicio 1: tarifas por lotes"
+        working-directory: laboratorios/semana-12-sesion-01/starter/ejercicio1
+        run: |
+          python entrenar.py
+          python predecir_lote.py
+          pytest -v
+
+      - name: "Sesion 1, ejercicio 2: cola de revision de fraude"
+        working-directory: laboratorios/semana-12-sesion-01/starter/ejercicio2
+        # comprobar.py termina siempre con codigo 0: el paso falla si algun
+        # paso dice "revisa".
+        run: |
+          python entrenar_fraude.py
+          python puntuar_pagos.py
+          pytest -v
+          python comprobar.py | tee comprobacion.txt
+          if grep -q "revisa" comprobacion.txt; then
+            echo "comprobar.py tiene pasos sin resolver."
+            exit 1
+          fi
