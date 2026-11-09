@@ -119,11 +119,11 @@ La tabla de corridas de tu experimento, exportada con `mlflow.search_runs(...).t
 
 **¿Qué modelo elegiste como final? Escribe su `run_id` y los números del registro que sostienen la decisión.**
 
-_(tu respuesta)_
+El **bosque aleatorio con `min_samples_leaf=2`**, `run_id` `2a4bbdc38c794ba1a7955c6493234e43`, marcado con `candidato` = `final` en el experimento `fallas-ssd` (notebook y tabla en `psets/proyecto/modelado/experimentos_proyecto.ipynb` y `corridas_proyecto.csv`). En prueba tiene average precision **0.5003** y AUC 0.8619. La red neuronal 32-16 llega a 0.3593, la logística a 0.2214 y la línea base a 0.0594, que es la tasa de falla. El bosque tarda 12.5 s en entrenar, menos que la red (35.1 s). Su brecha con entrenamiento es grande (0.7477 frente a 0.5003), pero aun así generaliza mejor que todos los demás. Al cargarlo desde el registro reproduce la misma métrica, 0.500256.
 
 **Si otra persona clona tu repositorio, ¿qué necesita para obtener exactamente el mismo número? ¿Qué de eso quedó registrado en MLflow y qué no?**
 
-_(tu respuesta)_
+Necesita cuatro cosas. Primero, el código en este commit. Segundo, el mismo `ssd_mc1.csv`, que se regenera con `psets/proyecto/ingesta/preparar_datos.py` desde los datos abiertos de Alibaba y cuya huella MD5 es `ef33432c8970`. Tercero, la misma división: `train_test_split` estratificado con `test_size=0.2` y semilla 42. Cuarto, las mismas versiones de las librerías (`requirements.txt`). **Quedó en MLflow:** los hiperparámetros (con el `random_state` del modelo), la semilla y el tipo de división, la huella de los datos, las métricas y el pipeline entrenado como artefacto, que guarda la versión de scikit-learn con que se entrenó. **No quedó:** el CSV en sí (solo su huella; si Alibaba cambia los archivos, la huella delata la diferencia pero no permite recuperarlos), el commit del código (un notebook no registra el commit de git como lo hace un script) y el ambiente completo. Además, el `run_id` es de mi registro local: otra persona obtiene el mismo número, pero con un `run_id` distinto.
 
 ## Antes de la próxima sesión
 

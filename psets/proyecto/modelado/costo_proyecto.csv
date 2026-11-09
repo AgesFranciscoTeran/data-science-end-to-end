@@ -1,0 +1,17 @@
+modelo,umbral,fallas_anticipadas,fallas_sin_aviso,falsas_alarmas,recall,costo,ahorro_vs_sin_modelo
+bosque min_samples_leaf=2 (final),0.02,9508,1000,73904,0.9048,4195200,0.2015
+bosque min_samples_leaf=2 (final),0.05,8471,2037,40921,0.8061,3064550,0.4167
+bosque min_samples_leaf=2 (final),0.1,7196,3312,19477,0.6848,2629850,0.4995
+bosque min_samples_leaf=2 (final),0.15,6184,4324,10891,0.5885,2706550,0.4849
+bosque min_samples_leaf=2 (final),0.2,5329,5179,6494,0.5071,2914200,0.4453
+bosque min_samples_leaf=2 (final),0.3,3985,6523,2530,0.3792,3388000,0.3552
+bosque min_samples_leaf=2 (final),0.4,3141,7367,1016,0.2989,3734300,0.2892
+bosque min_samples_leaf=2 (final),0.5,2479,8029,404,0.2359,4034700,0.2321
+red neuronal 32-16 (segundo),0.02,9790,718,108335,0.9317,5775750,-0.0993
+red neuronal 32-16 (segundo),0.05,7931,2577,50482,0.7548,3812600,0.2743
+red neuronal 32-16 (segundo),0.1,5925,4583,22049,0.5639,3393950,0.354
+red neuronal 32-16 (segundo),0.15,4254,6254,9163,0.4048,3585150,0.3176
+red neuronal 32-16 (segundo),0.2,2989,7519,3793,0.2844,3949150,0.2484
+red neuronal 32-16 (segundo),0.3,2012,8496,1222,0.1915,4309100,0.1798
+red neuronal 32-16 (segundo),0.4,1670,8838,586,0.1589,4448300,0.1533
+red neuronal 32-16 (segundo),0.5,1428,9080,345,0.1359,4557250,0.1326

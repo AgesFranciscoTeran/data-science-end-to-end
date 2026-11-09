@@ -110,19 +110,19 @@ Escribe qué error es más caro en tu proyecto (sobreestimar o subestimar, un fa
 
 **¿Qué esquema de validación corresponde a tu proyecto, y por qué?**
 
-_(tu respuesta)_
+**Estratificado de 5 pliegues** (`StratifiedKFold`, mezclado, semilla 42). Solo el 5,94 % de los SSD falla, así que cada pliegue tiene que tener la misma proporción de fallas: con estratificación, cada uno tiene 2101 o 2102. No corresponde validar por grupo, porque cada SSD aparece una sola vez (una fila por disco). Tampoco por fecha: todos los sanos se midieron el 2019-12-31, así que un corte temporal dejaría pliegues sin sanos. Notebook y tablas: `psets/proyecto/modelado/validacion_proyecto.ipynb`, `validacion_proyecto.csv` y `costo_proyecto.csv`.
 
 **¿Cambió la conclusión entre el esquema al azar y el tuyo? Muestra los números.**
 
-_(tu respuesta)_
+No cambió. Con 10.508 fallas, el esquema al azar ya reparte casi la misma proporción en cada pliegue (entre 2064 y 2151 fallas), así que los promedios casi coinciden. Bosque: estratificado **0.5134 ± 0.0083**, al azar 0.5151 ± 0.0060. Red neuronal: estratificado **0.3553 ± 0.0184**, al azar 0.3570 ± 0.0278. Lo que sí cambia es la variación de la red: al azar sus pliegues van de 0.326 a 0.395, porque cada pliegue tiene una cantidad distinta de fallas. Con menos fallas, la estratificación importaría mucho más.
 
 **¿La diferencia entre tu modelo final y el segundo es mayor que la variación entre pliegues? ¿Sigues eligiendo el mismo?**
 
-_(tu respuesta)_
+Sí, mucho mayor. La diferencia es de **0.158** de average precision (0.5134 frente a 0.3553), y la desviación entre pliegues es de 0.008 para el bosque y 0.018 para la red: unas 9 veces la desviación más grande. Además, el peor pliegue del bosque (0.5001) supera al mejor de la red (0.3825). Sigo eligiendo el bosque.
 
 **¿Qué métrica del negocio elegiste, y qué dice que no decía la anterior?**
 
-_(tu respuesta)_
+Elegí el **costo de los errores en dólares**. Una falla sin aviso cuesta unos 500 dólares (reemplazo de urgencia, reconstrucción del arreglo y riesgo para los datos y el SLA), y una falsa alarma unos 50 (revisar o migrar un disco sano), así que un falso negativo es 10 veces más caro. Lo calculé con las probabilidades de validación cruzada estratificada, para varios umbrales. Sin modelo, las 10.508 fallas llegan sin aviso y cuestan **5.254.000** dólares. Con el bosque, el umbral más barato es **0.10**: anticipa 7196 fallas (recall 0.68) a cambio de 19.477 falsas alarmas, y cuesta 2.629.850, **50 % menos**. La red, en su mejor umbral (también 0.10), solo ahorra el 35 %. La average precision decía cuál modelo ordena mejor los discos. El costo dice algo que ella no decía: **dónde cortar**. Con el umbral de 0.5 que se usa por defecto, el bosque solo anticipa el 24 % de las fallas y ahorra el 23 %; bajar el umbral a 0.10 duplica el ahorro, aunque multiplica por 48 las falsas alarmas.
 
 ## Antes de la próxima sesión
 

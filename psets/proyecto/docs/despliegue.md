@@ -1,28 +1,28 @@
 # Despliegue: el modelo de fallas de SSD se sirve por lotes
 
-**Decisión:** el modelo corre **por lotes, una vez al día**, después de que llega el SMART del día completo. Deja una tabla con la probabilidad de falla a 30 días de cada SSD MC1, y el equipo de operaciones de almacenamiento la usa para armar la lista de discos a reemplazar.
+**Decisión:** el modelo corre **por lotes, una vez al día**, cuando termina la recolección diaria del SMART de todos los discos. Le asigna a cada SSD C1 una probabilidad de estar fallando y deja una tabla ordenada de mayor a menor riesgo. El equipo de operaciones del centro de datos usa esa tabla para decidir qué discos reemplazar o vaciar primero.
 
 ## Qué decisión habilita y cuánto puede esperar
 
-- **Decisión:** qué SSD se reemplazan de forma preventiva, y en cuáles se migran antes los datos a otro disco. El modelo responde "¿este SSD fallará en los próximos 30 días?" (`TARGET_30D`).
-- **Quién la usa:** el equipo de operaciones del centro de datos. No hay un cliente esperando una respuesta: la salida es una lista de trabajo que se planifica en turnos.
-- **Cuánto puede esperar:** **24 horas.** La predicción vale para una ventana de 1 a 30 días, y migrar datos o programar el cambio de un disco toma horas o días. Una estimación que llega en 50 ms o en 6 horas lleva a la misma decisión. La etiqueta descarta a propósito las fallas del mismo día (`SAME_DAY_FAILURE`), así que el modelo nunca promete avisar con minutos de anticipación.
+- **Decisión:** a qué SSD se les migran los datos y cuáles se reemplazan de forma preventiva, antes de que la falla deje un servidor sin disco. El modelo responde "¿este SSD se parece a los que fallaron?" a partir de sus contadores SMART (`failure`, con average precision de prueba 0.50 para el bosque aleatorio de la Semana 10).
+- **Quién la usa:** técnicos de operaciones, que trabajan una lista por turno. No hay un usuario esperando la respuesta en una pantalla.
+- **Cuánto puede esperar:** **24 horas.** Los contadores que delatan una falla (sectores reasignados `r_5`, errores no corregibles `r_187`, sectores pendientes `r_197`, errores CRC `r_199`) crecen durante días o semanas antes de que el disco muera. Migrar los datos y cambiar el disco toma horas. Recibir la lista a las 2:00 en lugar de en 50 ms no cambia qué disco se cambia ni cuándo.
 
 ## Cuántos casos hay y si se conocen de antemano
 
-- Un caso es **un SSD en un día**. En el snapshot público del 2019-12-31 hay unos **168.000 SSD** del modelo C1, el equivalente a MC1, y en el dataset completo son unos 115 millones de observaciones MC1 en dos años.
-- **Se conocen todos de antemano:** son el inventario de discos instalados. No llegan casos nuevos desde afuera durante el día. Un disco nuevo entra al lote del día siguiente.
-- Puntuar 168.000 filas una vez al día con un gradient boosting toma minutos en una sola máquina. El costo está en calcular las ventanas, y esa parte ya corre por lotes en el pipeline del PSet 2 (Kestra, dbt y Spark).
+- Un caso es **un SSD en un día**. En los datos abiertos de Alibaba hay **unos 168.000 SSD C1** activos el 2019-12-31. El dataset del proyecto, `ssd_mc1.csv`, tiene 176.900 SSD con alguna lectura SMART: los sanos de ese día más los 10.508 que fallaron en 2018 y 2019.
+- **Se conocen todos de antemano:** son el inventario de discos instalados. Un disco nuevo entra al lote del día siguiente, y ninguna petición llega desde afuera.
+- Puntuar los 176.900 SSD con el bosque de 200 árboles tomó 0,8 segundos en una laptop, así que una corrida diaria es barata.
 
 ## Qué datos necesitan las features y cuándo están disponibles
 
-- Las features son el valor del día de los 22 atributos SMART (raw `R_` y normalizado `N_`) y, para cada uno, la **media, el conteo y el cambio de media en ventanas de 7, 14 y 30 días**. La ventana anterior de 30 días mira 59 días hacia atrás.
-- El SMART se publica **un archivo por día**. Una ventana de 7 días solo está completa cuando cerró el día de hoy. Antes de eso, la media de hoy se calcularía con medio día de datos.
-- Las ventanas necesitan el **historial de 60 días de cada disco**, que vive en el warehouse (Snowflake). Calcularlo en el momento de cada petición obligaría a guardar el estado de cada disco en el servicio, y sin una fuente de SMART en tiempo real no habría nada nuevo que calcular.
-- La etiqueta mira 30 días hacia el futuro y nunca llega al modelo. Las pruebas de `modelado/test_pipeline_proyecto.py` lo comprueban.
+- Las 13 features numéricas son contadores SMART crudos del día (`r_5`, `r_183`, `r_184`, `r_187`, `r_195`, `r_197`, `r_199`, `r_program`, `r_erase`, `n_wearout`, `r_12`, `r_174`) y dos derivadas de ellos: `n_contadores_error` y `log_r_5`. La categórica es `app`, la aplicación del servidor, que viene del inventario.
+- El SMART se recolecta **una vez al día por disco**, y en Alibaba llega como un archivo diario. Antes de que termine la recolección, la lectura de hoy simplemente no existe; con la de ayer, el lote ya está calculado.
+- `app` sale del inventario de ubicación, que cambia poco y se puede leer en el mismo lote.
+- La fecha de la lectura y `r_9` (horas de uso) no entran al modelo. En este dataset delatan la clase, porque todos los sanos se midieron el mismo día. Las pruebas de `modelado/test_pipeline_proyecto.py` comprueban que no llegan al modelo.
 
 ## Qué se pierde al descartar el servicio en línea
 
-- **Reaccionar a una degradación brusca el mismo día:** un salto en los sectores reasignados (`R_5`) o en los errores CRC (`R_199`) a las 9:00 aparece en la lista recién al día siguiente.
-- **Consultar un disco a pedido:** si un técnico quiere saber el riesgo de un disco ahora mismo, lee la última fila de la tabla. Esa fila puede tener hasta un día de antigüedad.
-- Las dos cosas solo valdrían la pena si la telemetría llegara cada pocos minutos y la acción fuera automática, por ejemplo sacar el disco de un RAID. Este proyecto no cumple ninguna de las dos condiciones (ver `06_batch_vs_streaming.md` del PSet 2).
+- **Reaccionar el mismo día a un salto brusco**, por ejemplo un disco que acumula cientos de errores CRC en una hora. Ese disco aparece en la lista recién al día siguiente.
+- **Consultar un disco a pedido:** un técnico que quiere el riesgo de un disco ahora mismo lee la última fila de la tabla, que puede tener hasta un día de antigüedad.
+- Ninguna de las dos cosas compensa el costo de un servicio en línea mientras el SMART llegue una vez al día y la respuesta sea un ticket para una persona. Valdría la pena si la telemetría llegara cada pocos minutos y la acción fuera automática, por ejemplo sacar el disco de un RAID.
