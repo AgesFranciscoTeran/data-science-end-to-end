@@ -88,19 +88,19 @@ Solo o en pareja. Carpeta: [`starter/ejercicio2/`](./starter/ejercicio2/). Cada 
 
 **Respuesta 1:** ¿cuántos pagos quedaron en la cola de revisión? ¿Cuántos fraudes esperarías encontrar en los 300 pagos, si la proporción es la de la Semana 11?
 
-_(tu respuesta)_
+Quedaron **26 pagos** en la cola de revisión (umbral 0.10, modelo `5415a94b4287`). En la Semana 11 la proporción de fraude era 295 de 6000 pagos (4.9 %), así que en 300 pagos esperaría unos **15 fraudes**. La cola es casi el doble de esa cifra: con un umbral bajo se prefiere revisar algunos pagos legítimos de más antes que dejar pasar fraudes.
 
 **Respuesta 2:** este modelo corre por lotes, una vez al día. ¿Qué pierde la empresa por no evaluar cada pago en el momento en que ocurre? ¿Qué tendría que pasar con la revisión para que eso importe?
 
-_(tu respuesta)_
+Pierde la posibilidad de **detener el fraude antes de que ocurra**: el pago ya se cobró y el viaje ya se hizo cuando el modelo lo marca, así que solo queda reclamar o bloquear la cuenta después. Eso importa si la revisión se puede hacer en el momento (bloquear o pedir una verificación antes de aceptar el pago) y no al día siguiente. Si el equipo igual revisa la cola en horario de oficina, puntuar en línea no cambia nada.
 
 **Respuesta 3:** la prueba de la cola de revisión arma su propia tabla de cuatro pagos con probabilidades escritas a mano, en vez de usar el modelo. ¿Qué gana la prueba con eso?
 
-_(tu respuesta)_
+La prueba revisa **solo la lógica de la cola** (filtrar por el umbral, incluir el límite y ordenar), sin depender del modelo. Como las probabilidades están escritas a mano, se sabe de antemano qué pagos tienen que quedar y en qué orden, la prueba no cambia si se reentrena el modelo y corre en cualquier máquina sin el `.joblib`, también en GitHub Actions.
 
 **Si terminas antes:** sube `UMBRAL` a 0.50 y vuelve a correr `puntuar_pagos.py`. ¿Cuántos pagos quedan en la cola? ¿Siguen pasando todas las pruebas? ¿Por qué?
 
-_(tu respuesta)_
+Con `UMBRAL = 0.50` quedan **13 pagos** en la cola. Las pruebas siguen pasando todas, porque ninguna usa la constante `UMBRAL`: `test_cola_de_revision` llama a `a_revisar` con su propio umbral de 0.10, y las demás solo revisan la forma de la tabla puntuada. Las pruebas comprueban que el código hace lo que dice, no qué umbral eligió el negocio.
 
 ## Ejercicio 3: el despliegue y las pruebas de tu proyecto
 
