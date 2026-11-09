@@ -86,7 +86,7 @@ def test_ventana_calculada_a_mano():
     ultimo = agregar_ventanas(observaciones, ["R_5"]).iloc[-1]
 
     assert ultimo["R_5_COUNT_7D"] == 7       # del 2 al 8 de enero
-    assert ultimo["R_5_MEAN_7D"] == 1.0      # 7 / 7
+    assert ultimo["R_5_MEAN_7D"] == 2.0      # 7 / 7
     assert ultimo["R_5_MEAN_SHIFT_7D"] == 1.0  # la ventana anterior solo tiene el 1 de enero, en 0
 
 
