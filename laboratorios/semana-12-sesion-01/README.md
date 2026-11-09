@@ -131,7 +131,7 @@ El archivo [`.github/workflows/pruebas.yml`](../../.github/workflows/pruebas.yml
 
 **Pega el enlace a la ejecución de GitHub Actions donde pasan tus pruebas:**
 
-https://github.com/AgesFranciscoTeran/data-science-end-to-end/actions/runs/42671017520 (7 pruebas de `psets/proyecto/modelado/test_pipeline_proyecto.py` en verde, Python 3.11).
+https://github.com/AgesFranciscoTeran/data-science-end-to-end/actions/runs/42675128116 (las 6 pruebas de `psets/proyecto/modelado/test_pipeline_proyecto.py` en verde con Python 3.11, junto con los laboratorios de las semanas 11 y 12).
 
 **¿Qué patrón elegiste para tu proyecto, y qué número de latencia lo decide?**
 
