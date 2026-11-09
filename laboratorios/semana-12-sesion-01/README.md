@@ -131,15 +131,15 @@ El archivo [`.github/workflows/pruebas.yml`](../../.github/workflows/pruebas.yml
 
 **Pega el enlace a la ejecución de GitHub Actions donde pasan tus pruebas:**
 
-_(tu respuesta)_
+https://github.com/AgesFranciscoTeran/data-science-end-to-end/actions/runs/42671017520 (7 pruebas de `psets/proyecto/modelado/test_pipeline_proyecto.py` en verde, Python 3.11).
 
 **¿Qué patrón elegiste para tu proyecto, y qué número de latencia lo decide?**
 
-_(tu respuesta)_
+**Por lotes, una vez al día.** El modelo predice si un SSD fallará en los próximos **30 días**, y la acción (migrar datos, programar el reemplazo) se planifica en horas o días: la predicción puede esperar **24 horas** sin que cambie ninguna decisión. Además, las features son ventanas de 7, 14 y 30 días sobre un SMART que llega un archivo por día, así que no hay nada nuevo que calcular entre un lote y el siguiente. El detalle está en `psets/proyecto/docs/despliegue.md`.
 
 **Rompe a propósito una de tus pruebas (cambia un valor esperado), haz push y mira qué pasa en GitHub. Después arréglala. ¿Qué te dijo GitHub, y dónde lo viste?**
 
-_(tu respuesta)_
+Cambié el valor esperado de `R_5_MEAN_7D` en `test_ventana_calculada_a_mano` de 1.0 a 2.0 e hice push. GitHub marcó el commit con una **X roja** y en la pestaña **Actions** la ejecución quedó en *failure* (https://github.com/AgesFranciscoTeran/data-science-end-to-end/actions/runs/42671261427). En el log del paso "Correr las pruebas de psets/proyecto" apareció `FAILED ...::test_ventana_calculada_a_mano - assert 1.0 == 2.0` y `1 failed, 6 passed`. Devolví el valor a 1.0 y la siguiente ejecución volvió a verde.
 
 ## Antes de la próxima sesión
 
