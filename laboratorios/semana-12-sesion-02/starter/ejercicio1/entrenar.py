@@ -21,7 +21,7 @@ RUTA_MODELO = "modelo_tarifa.joblib"
 viajes = pd.read_csv("viajes_features.csv")
 modelo = Pipeline([
     ("preparar", preparacion()),
-    ("modelo", MLPRegressor(hidden_layer_sizes=(64,), max_iter=1000, random_state=42)),
+    ("modelo", MLPRegressor(hidden_layer_sizes=(64,), max_iter=1000, random_state=42)), #se jala no se crea
 ])
 modelo.fit(viajes[NUMERICAS + YA_LISTAS + CATEGORICAS], viajes[OBJETIVO])
 

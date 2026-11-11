@@ -69,7 +69,7 @@ jobs:
 
   # Semana 12: los laboratorios son scripts con sus pruebas. Cada ejercicio
   # entrena su modelo (el .joblib no se sube), corre el script y sus pruebas.
-  # La Sesion 2 se agrega aqui cuando este resuelta.
+  # La Sesion 2 prueba los servicios con TestClient, sin levantarlos.
   semana-12:
     runs-on: ubuntu-latest
     steps:
@@ -97,6 +97,23 @@ jobs:
         run: |
           python entrenar_fraude.py
           python puntuar_pagos.py
+          pytest -v
+          python comprobar.py | tee comprobacion.txt
+          if grep -q "revisa" comprobacion.txt; then
+            echo "comprobar.py tiene pasos sin resolver."
+            exit 1
+          fi
+
+      - name: "Sesion 2, ejercicio 1: la tarifa como servicio"
+        working-directory: laboratorios/semana-12-sesion-02/starter/ejercicio1
+        run: |
+          python entrenar.py
+          pytest -v
+
+      - name: "Sesion 2, ejercicio 2: el fraude en el momento del pago"
+        working-directory: laboratorios/semana-12-sesion-02/starter/ejercicio2
+        run: |
+          python entrenar_fraude.py
           pytest -v
           python comprobar.py | tee comprobacion.txt
           if grep -q "revisa" comprobacion.txt; then

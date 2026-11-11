@@ -48,27 +48,27 @@ curl -X POST localhost:8000/predecir -H "Content-Type: application/json" -d '{"f
 
 **Respuesta 1 (antes de los TODO):** sin resolver, `/salud` dice que el modelo está cargado, `/predecir` responde 200 y `pytest` dice `3 passed`. ¿Qué de esa salida debería preocuparte?
 
-_(tu respuesta)_
+Que todo se ve sano y nada funciona. Sin resolver, `/predecir` siempre devuelve `{"tarifa_estimada": 0.0}`: el esquema no declara la fecha, la distancia ni los pasajeros, y el código nunca llama al modelo. `/salud` solo dice que el archivo se cargó, no que el modelo se use, y las 3 pruebas pasan porque dos de ellas no tienen ningún `assert`. Un 200 y un `passed` no dicen que la respuesta sea correcta.
 
 **Respuesta 2 (TODO 1):** con el esquema completo, ¿qué esperas que responda el servicio a un viaje sin `distancia_km`? ¿Y a uno sin `zona_origen`?
 
-_(tu respuesta)_
+Sin `distancia_km`, el servicio igual estima una tarifa: el campo es opcional (`None` por defecto) y la preparación lo imputa con la mediana. El viaje de Midtown al JFK sin distancia ni pasajeros recibió 52.55. Sin `zona_origen`, responde **422**, porque es obligatoria.
 
 **Respuesta 3 (TODO 2):** el modelo se entrenó con `hora_sin`, `hora_cos` y `es_hora_pico`, pero la app manda solo la fecha y hora. ¿Qué pasaría si el servicio calculara `es_hora_pico` con otras horas que las del entrenamiento?
 
-_(tu respuesta)_
+El modelo recibiría una feature con un significado distinto del que aprendió, y se equivocaría sin dar ningún error: la petición respondería 200 con una tarifa plausible pero mal calculada, por ejemplo cobrando la congestión de hora pico a las 11:00. Por eso el servicio importa `agregar_features` de `features_taxis.py` en lugar de reescribirla: es la misma función con que se armaron las features de entrenamiento.
 
 **Respuesta 4 (TODO 3 y 4):** el código 422 del viaje sin zona de origen, ¿lo produce tu código o FastAPI? ¿La petición llega al modelo?
 
-_(tu respuesta)_
+Lo produce **FastAPI**, no mi código. Pydantic valida el JSON contra el esquema `Viaje` antes de llamar a `predecir`, y al faltar `zona_origen` responde 422 con `{"type": "missing", "loc": ["body", "zona_origen"], "msg": "Field required"}`. La petición **no llega al modelo**: la función `predecir` ni siquiera se ejecuta.
 
 **Respuesta 5 (TODO 5):** construye y corre la imagen con el `CMD` sin resolver (`docker build -t servicio-tarifa .` y `docker run -p 8000:8000 servicio-tarifa`). El log dice que uvicorn está corriendo, pero `curl localhost:8000/salud` falla. ¿Por qué?
 
-_(tu respuesta)_
+Sin `--host`, uvicorn escucha en `127.0.0.1`, que dentro del contenedor es la interfaz del propio contenedor. `-p 8000:8000` reenvía el tráfico a la interfaz de red del contenedor, donde nadie escucha, así que la conexión falla aunque el log diga `Uvicorn running on http://127.0.0.1:8000`. Con `--host 0.0.0.0`, uvicorn escucha en todas las interfaces y `curl localhost:8000/salud` responde. (Ojo: el comando tiene que terminar en `.`, la carpeta de contexto del build: `docker build -t servicio-tarifa .`.)
 
 **Lo que respondió el servicio:**
 
-_(anota la tarifa del viaje de Midtown al aeropuerto, y la respuesta completa al viaje sin zona de origen)_
+Desde el contenedor (`docker run -p 8000:8000 servicio-tarifa`): `/salud` respondió `{"estado":"ok","modelo_cargado":true}`. El viaje de Midtown al JFK Airport (2026-11-05 08:30, 26.4 km, 2 pasajeros, tarjeta) respondió `{"tarifa_estimada":70.39}`. Sin zona de origen respondió **422**: `{"detail":[{"type":"missing","loc":["body","zona_origen"],"msg":"Field required","input":{"fecha_hora_inicio":"2026-11-05 08:30","zona_destino":"JFK Airport","distancia_km":26.4,"pasajeros":2,"metodo_pago":"tarjeta"}}]}`.
 
 ## Durante el ConcepTest
 
@@ -90,19 +90,19 @@ Solo o en pareja. Carpeta: [`starter/ejercicio2/`](./starter/ejercicio2/). La se
 
 **Respuesta 1:** levanta el servicio y evalúa dos pagos: uno de madrugada, por app, con tarjeta nueva, dos intentos fallidos y ningún viaje previo; otro de la tarde, con tarjeta conocida y 22 viajes previos. ¿Qué probabilidad y qué decisión recibió cada uno?
 
-_(tu respuesta)_
+El pago de madrugada (02:40, por app, tarjeta nueva, 2 intentos fallidos, 0 viajes previos, 41.30 dólares) recibió `{"probabilidad_fraude": 0.9996, "revisar": true}`. El de la tarde (14:10, tarjeta conocida, 0 intentos fallidos, 22 viajes previos, 19.80 dólares) recibió `{"probabilidad_fraude": 0.0159, "revisar": false}`.
 
 **Respuesta 2:** el servicio devuelve la decisión (`revisar`) además de la probabilidad. ¿Qué gana la app con eso? ¿Qué tendría que cambiar si la empresa decide mañana que el umbral es 0.20?
 
-_(tu respuesta)_
+La app no tiene que conocer el umbral ni la regla de negocio: recibe la decisión y actúa (detener el cobro o dejarlo pasar). Así la regla vive en un solo lugar y todas las apps la aplican igual. Si mañana el umbral pasa a 0.20, solo cambia `UMBRAL` en `servicio_fraude.py` y se vuelve a desplegar el servicio (construir la imagen y reiniciar el contenedor). Las apps no cambian, y la probabilidad tampoco, porque el modelo es el mismo.
 
 **Respuesta 3:** el mismo pago, evaluado por este servicio y por el lote de la sesión pasada, ¿da la misma probabilidad? ¿Qué tiene que ser igual en los dos para que así sea?
 
-_(tu respuesta)_
+Sí: con el mismo modelo, el pago de madrugada da 0.9996 en los dos. Para eso tienen que ser iguales tres cosas: el **mismo archivo de modelo** (el mismo `.joblib`, entrenado con los mismos datos y semilla), la **misma preparación** (los dos importan `agregar_features` y `columnas` de `preparacion_pagos.py`, así que `hora` y `monto_por_km` se calculan igual) y las **mismas versiones de librerías**, sobre todo scikit-learn. Si el lote y el servicio cargan modelos entrenados en días distintos, o uno calcula la hora con otra zona horaria, la misma entrada da otra probabilidad.
 
 **Si terminas antes:** manda a `/evaluar_pago` un pago con `"monto": "cuarenta"`. ¿Qué responde el servicio, y qué línea de `servicio_fraude.py` produce esa respuesta?
 
-_(tu respuesta)_
+Responde **422**: `{"detail":[{"type":"float_parsing","loc":["body","monto"],"msg":"Input should be a valid number, unable to parse string as a number","input":"cuarenta"}]}`. Lo produce la línea `monto: float` del esquema `Pago`: Pydantic intenta convertir el texto a número, no puede, y FastAPI rechaza la petición antes de llamar a `evaluar_pago`.
 
 ## Ejercicio 3: el servicio de tu proyecto
 
