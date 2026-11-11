@@ -135,7 +135,7 @@ else:
 # que usaste el precio por millon de tokens de entrada y anotalo abajo.
 # Cuenta un token cada 4 caracteres, y un prompt como este por cada 20
 # viajes; ignora los tokens de salida.
-# Claude Opus 5.5, entrada: USD 4 por millon de tokens
+# Claude Fable 5.1 (el LLM que respondio respuestas_llm.txt), entrada: USD 10 por millon de tokens
 # (https://platform.claude.com/docs/en/about-claude/pricing).
 # Cambialo si usaste otro modelo.
 PRECIO_POR_MILLON_DE_TOKENS = 10.00

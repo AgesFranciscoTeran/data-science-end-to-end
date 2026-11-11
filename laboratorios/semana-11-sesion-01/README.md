@@ -30,17 +30,17 @@ A partir de la lectura previa:
 
 **Según el artículo, ¿qué tres cosas hay que versionar en un proyecto de machine learning, y con qué herramienta versiona el autor cada una?**
 
-_(tu respuesta)_
+El **código**, los **datos** y los **modelos** (con sus experimentos: parámetros y métricas de cada corrida). El código se versiona con **Git**; los datos y los modelos, que son archivos grandes, con una herramienta que guarda en Git solo una referencia liviana (como DVC) y el archivo en un almacenamiento aparte; y los experimentos, con un registro como **MLflow**, que guarda de cada corrida sus parámetros, sus métricas y el modelo entrenado.
 
 **¿Por qué no alcanza con Git para versionar los datos?**
 
-_(tu respuesta)_
+Porque Git está hecho para archivos de texto pequeños que cambian línea por línea: guarda una copia completa de cada versión, así que un CSV de cientos de MB o un modelo binario hacen crecer el repositorio sin límite, y GitHub rechaza archivos de más de 100 MB. Además, un cambio en una fila de un archivo enorme no se puede leer como una diferencia útil. Por eso los datos se identifican con una huella (un hash) y se guardan fuera; en este curso, además, `data/` está en `.gitignore` y se regenera con un script.
 
 ## Pregunta de apertura
 
 Dos compañeros reportan errores distintos para "el mismo" gradient boosting sobre los mismos datos de taxis. ¿Qué tendrías que saber de cada corrida para descubrir por qué no coinciden?
 
-_(tu respuesta)_
+De cada corrida necesitaría: **qué datos** usó (el archivo y una huella que pruebe que es el mismo), **cómo los dividió** (la semilla o la fecha de corte, y la proporción de prueba), **qué preparación** aplicó, los **hiperparámetros** del modelo (incluido su `random_state`), las **versiones** de las librerías y **la métrica exacta** con que midió. Si todo eso coincide, el error tiene que coincidir; la diferencia está en lo que no coincide. Sin un registro, nada de eso queda escrito.
 
 ## Ejercicio 1: registrar cada corrida con MLflow
 
@@ -48,19 +48,19 @@ Notebook: [`starter/ejercicio1_registrar_corridas.ipynb`](./starter/ejercicio1_r
 
 **Respuesta 1 (antes de los TODO):** sin resolver, el notebook entrena los tres modelos e imprime sus errores. ¿Cuál de los dos gradient boosting tiene razón? ¿Qué parte de la salida te permite saberlo, y qué parte no?
 
-_(tu respuesta)_
+**Ninguno está equivocado:** los dos son correctos para la división con que se midieron. La salida dice el error de entrenamiento y de prueba de cada uno (1.2754 frente a 1.1867), pero **no dice con qué datos ni con qué división** se calculó cada número, que es justo lo que explica la diferencia. Con solo la salida no se puede saber si comparan lo mismo.
 
 **Respuesta 2 (TODO 2 y 3):** de todo lo que se puede registrar de una corrida, ¿qué crees que explica la diferencia entre los dos gradient boosting? ¿Qué parámetro esperas ver distinto en la tabla del paso 5?
 
-_(tu respuesta)_
+La **división de los datos**: el mismo modelo, con los mismos hiperparámetros y el mismo archivo, se evaluó sobre viajes de prueba distintos. Esperaba ver distinto `semilla_division` (42 frente a 7) y la misma `huella_datos`. Así fue: la tabla muestra la misma huella y los mismos hiperparámetros, solo cambia la semilla.
 
 **Respuesta 3 (TODO 4):** el registro ya tiene los parámetros y las métricas. ¿Para qué guardar además el modelo entrenado?
 
-_(tu respuesta)_
+Para poder **usarlo y reproducirlo sin reentrenar**: cargarlo después y verificar que da el mismo error (el paso 5 del Ejercicio 2), servirlo en producción con exactamente el mismo objeto que se evaluó, o inspeccionarlo (por ejemplo, la importancia de cada columna). Los parámetros dicen cómo se entrenó, pero reentrenar no garantiza el mismo modelo si cambió una librería o los datos.
 
 **Lo que mostró la tabla del paso 5:**
 
-_(anota el error en prueba, la semilla de la división y la huella de los datos de cada corrida)_
+La huella de `viajes_features.csv` fue **cc636c7813cf** en las tres corridas. Gradient boosting con semilla de división **7**: MAE de prueba **1.1867**. Gradient boosting con semilla **42**: **1.2754**. Bosque aleatorio con semilla **42**: **1.3016**. Los dos gradient boosting tienen los mismos datos y los mismos hiperparámetros; solo cambia la división.
 
 ## Durante el ConcepTest
 
@@ -82,19 +82,19 @@ Solo o en pareja. Notebook: [`starter/ejercicio2_comparar_y_elegir.ipynb`](./sta
 
 **Respuesta 1:** ¿qué modelo quedó primero en el registro, y por cuánto le gana al segundo?
 
-_(tu respuesta)_
+La **red neuronal**, con MAE de prueba **1.1695** dólares, le gana al gradient boosting (1.2754) por **0.106** dólares, un 8 % menos de error. Después vienen el bosque (1.3016), ridge (2.5565) y la línea base (12.5308).
 
 **Respuesta 2:** el paso 5 carga el modelo ganador desde el registro y vuelve a calcular su error. ¿Qué te garantiza que coincida con el número registrado? ¿Qué no te garantiza sobre ese modelo?
 
-_(tu respuesta)_
+Garantiza que el archivo guardado **es el mismo modelo** que produjo la métrica registrada: con los mismos datos de prueba da el mismo número, así que nada se perdió ni cambió al guardarlo y cargarlo. **No garantiza** que el modelo sea bueno con datos nuevos ni que la diferencia con el segundo sea real: se midió en una sola división de 595 viajes, y con otra semilla el orden podría cambiar (el gradient boosting pasó de 1.2754 a 1.1867 solo con cambiar la división).
 
 **Respuesta 3:** si mañana alguien cambia una fila de `viajes_features.csv` y vuelve a entrenar, ¿cómo lo notarías mirando solo el registro?
 
-_(tu respuesta)_
+Por la **huella de los datos** (`huella_datos`): el MD5 del archivo cambia con un solo byte distinto, así que la corrida nueva tendría una huella distinta de cc636c7813cf. Si los errores cambian y la huella también, el cambio vino de los datos, no del modelo.
 
 **Si terminas antes:** abre la interfaz de MLflow (pestaña **Ports**, puerto 5050), entra al experimento `tarifa-taxis-comparacion`, selecciona las cinco corridas y compáralas lado a lado con **Compare**. Además del error, ¿qué te dice el registro de la red neuronal que no te diría una tabla escrita a mano?
 
-_(tu respuesta)_
+Que registra **todo lo que se usó para obtener el error**, no solo el error: los hiperparámetros exactos de la red (capas, `max_iter`, `random_state`), cuánto tardó en entrenar comparada con los demás (la red es la más lenta), la semilla y la huella de los datos, y el modelo guardado para volver a usarlo. Una tabla escrita a mano suele tener solo la métrica, y nada asegura que sus números salgan de la misma corrida.
 
 ## Ejercicio 3: el registro de tu proyecto
 
@@ -131,4 +131,4 @@ Necesita cuatro cosas. Primero, el código en este commit. Segundo, el mismo `ss
 
 Hoy elegiste el modelo con menor error sobre los 595 viajes de prueba. ¿Cuánto cambiaría ese error si la división hubiera sido otra? ¿Lo viste en algún lado del registro?
 
-_(tu respuesta)_
+Bastante, y sí se vio en el registro: el mismo gradient boosting dio **1.2754** con la semilla 42 y **1.1867** con la semilla 7, una diferencia de 0.09 dólares solo por cambiar qué 595 viajes quedaron de prueba. Eso es casi tanto como la ventaja de la red sobre el gradient boosting (0.106), así que con una sola división no se puede asegurar que la red sea mejor. Para saberlo hay que medir cada modelo en varias divisiones (validación cruzada) y comparar la diferencia con la variación entre pliegues, que es lo que hace la sesión siguiente.

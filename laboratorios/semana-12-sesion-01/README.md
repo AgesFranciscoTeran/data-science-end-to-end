@@ -24,17 +24,17 @@ A partir de la lectura previa:
 
 **Según el artículo, ¿qué distingue un sistema de predicción batch de uno online? Da un ejemplo de cada uno.**
 
-_(tu respuesta)_
+En un sistema **batch**, el modelo predice de una vez para un conjunto grande de casos conocidos, en un horario fijo (cada noche, cada hora), y guarda los resultados en una tabla que después se consulta; quien usa la predicción no espera al modelo. Ejemplo: las recomendaciones de productos de cada cliente, calculadas de noche. En un sistema **online**, el modelo responde a cada petición en el momento en que llega, con los datos de ese instante, y quien pregunta espera la respuesta. Ejemplo: decidir si un pago con tarjeta es fraude mientras se procesa el cobro.
 
 **¿Qué limitación tiene el sistema batch que el online resuelve, y qué cuesta resolverla?**
 
-_(tu respuesta)_
+El batch solo tiene predicciones para los casos que conocía al correr, y esas predicciones envejecen hasta el siguiente lote: no puede responder a un caso nuevo ni usar lo que pasó hace un minuto. El online lo resuelve, pero cuesta: un servicio corriendo todo el tiempo, con el modelo cargado y respondiendo en milisegundos; las features hay que calcularlas en el momento con la misma lógica que en el entrenamiento; y hay que vigilar la latencia, la disponibilidad y los picos de peticiones. Es más infraestructura y más cosas que pueden fallar.
 
 ## Pregunta de apertura
 
 La app de taxis usa dos modelos: uno estima la tarifa antes de pedir el viaje, otro decide si un pago es fraude. ¿Alguno de los dos se podría calcular una vez por noche para todos los casos posibles? ¿Cuál tiene que responder en el momento, y en cuánto tiempo?
 
-_(tu respuesta)_
+La **tarifa** se podría calcular de noche solo para los viajes que ya se conocen, como los reservados para mañana; no para todos los casos posibles, porque las combinaciones de origen, destino, hora y distancia son demasiadas. Un viaje que se pide en el momento necesita una respuesta en línea, en menos de un segundo, mientras el pasajero mira la pantalla. El **fraude** tiene que responder en el momento del cobro, en unos 100 a 200 milisegundos, si se quiere detener el pago antes de que se procese; si alcanza con revisarlo al día siguiente, puede ir por lotes.
 
 ## Ejercicio 1: la tarifa de los viajes programados, por lotes
 
@@ -50,23 +50,23 @@ pytest -v
 
 **Respuesta 1 (antes de los TODO):** sin resolver, `predecir_lote.py` escribe una tabla con una sola columna, y `pytest` dice `1 failed, 2 passed`. ¿Cómo pueden pasar dos pruebas si el script no estima ninguna tarifa?
 
-_(tu respuesta)_
+Porque las dos que pasan no comprueban nada todavía: `test_una_prediccion_por_viaje` y `test_viaje_incompleto_tambien_se_estima` solo llaman a `predecir_lote` y terminan sin ningún `assert` (son los `TODO` 4 y 5). Una prueba sin `assert` pasa siempre que el código no lance un error. La única que revisa algo, `test_columnas_de_salida`, es la que falla, porque la tabla solo tiene `id_viaje`. Que una prueba pase solo dice que no encontró el error que buscaba, no que el código esté bien.
 
 **Respuesta 2 (TODO 1 y 2):** 4 de los 60 viajes no tienen pasajeros y 2 no tienen método de pago. ¿Esperas que el script falle en esos viajes, que los salte, o que les estime una tarifa? ¿Por qué?
 
-_(tu respuesta)_
+Que les **estime una tarifa**. La app tiene que mostrar un precio para todos los viajes reservados, y que falte el número de pasajeros o el método de pago no impide estimarlo: la preparación del pipeline imputa los valores vacíos (con la mediana o la categoría más frecuente), igual que en el entrenamiento. Si el script fallara, un dato faltante en un viaje dejaría sin tarifa a los 60; si los saltara, esos pasajeros no verían precio.
 
 **Respuesta 3 (TODO 3):** todas las filas de la tabla llevan la misma `version_modelo`. ¿Para qué guardarla en cada fila?
 
-_(tu respuesta)_
+Para saber **qué modelo produjo cada estimación**, aunque la tabla se lea o se copie meses después. Si el modelo se reentrena, la tabla nueva tendrá otra versión, y una tarifa reclamada se puede rastrear hasta el archivo exacto del modelo (la huella MD5 del `.joblib`). Si la versión estuviera solo en un log, al separar las filas se perdería.
 
 **Respuesta 4 (TODO 4 y 5):** antes de escribir las dos pruebas, ¿qué cambio en `predecir_lote.py` haría fallar la del `TODO 4`? ¿Y la del `TODO 5`?
 
-_(tu respuesta)_
+La del `TODO` 4 (una fila por viaje, con los mismos `id_viaje` en el mismo orden) fallaría si `predecir_lote.py` **reordenara o filtrara los viajes**, por ejemplo con un `dropna()` o un `sort_values` antes de armar la tabla. La del `TODO` 5 (ningún viaje sin tarifa y todas las filas con la versión pasada) fallaría si el script **saltara o dejara en blanco** los viajes incompletos, o si escribiera una versión fija en lugar de la que recibe.
 
 **Lo que mostró el lote:**
 
-_(anota la versión del modelo, la tarifa más baja, la más alta, y qué tarifa recibieron los viajes sin pasajeros)_
+Versión del modelo: **48e2c6d1fb30**. Tarifa más baja: **4.67** dólares (viaje 90014, dentro del Upper East Side, 0.4 km). Más alta: **70.26** (viaje 90051, del Upper East Side al JFK Airport, 24.04 km; cerca de la tarifa fija de 70). Los 4 viajes sin pasajeros recibieron tarifa: 90023 (Queens a Upper West Side, 10.58 km) **33.94**, 90024 (Brooklyn a Harlem, 10.17 km) **29.88**, 90025 (Midtown a Harlem, 8.40 km) **25.80** y 90048 (Harlem a Upper East Side, 4.75 km) **17.58**. Los 2 sin método de pago también: 90044 **60.79** y 90050 **29.59**.
 
 ## Durante el ConcepTest
 
@@ -147,4 +147,4 @@ Cambié el valor esperado de `R_5_MEAN_7D` en `test_ventana_calculada_a_mano` de
 
 Hoy la app lee las tarifas de una tabla calculada de noche. Pero cuando un pasajero escribe un destino que no estaba reservado, no hay ninguna fila que leer. ¿Qué tendría que existir para que la app le pregunte al modelo en ese momento, y qué le mandaría?
 
-_(tu respuesta)_
+Tendría que existir un **servicio de predicción en línea**: una API corriendo todo el tiempo, con el modelo ya cargado en memoria, con una ruta como `POST /predecir`. La app le mandaría lo que conoce del viaje antes de que empiece: la fecha y hora, la zona de origen y la de destino, la distancia estimada, los pasajeros y el método de pago. El servicio calcularía el resto de las features (hora en seno y coseno, hora pico, tarifa fija) con las mismas funciones del entrenamiento y respondería la tarifa en milisegundos. Es lo que se construye en la sesión siguiente.

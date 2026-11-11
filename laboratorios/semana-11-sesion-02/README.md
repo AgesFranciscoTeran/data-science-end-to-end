@@ -16,17 +16,17 @@ A partir de la lectura previa:
 
 **Según el artículo, ¿qué es la paradoja de la exactitud (accuracy paradox)? ¿Qué métricas recomienda en su lugar?**
 
-_(tu respuesta)_
+Es cuando un modelo tiene una exactitud alta sin servir para nada: si la clase que importa es rara, predecir siempre la clase mayoritaria ya acierta casi todo. En vez de la exactitud recomienda métricas que miren la clase rara: **precisión** (de lo que marqué, cuánto era cierto), **recall o sensibilidad** (de lo que existía, cuánto encontré), su combinación (**F1**), la **matriz de confusión** completa, y curvas como la de precisión-recall, que no dependen de un solo umbral.
 
 **El artículo cita la ley de Goodhart: "cuando una medida se convierte en objetivo, deja de ser una buena medida". ¿Qué ejemplo da, y qué tiene que ver con elegir un modelo por una sola métrica?**
 
-_(tu respuesta)_
+Cuando una métrica se vuelve la meta, la gente (o el modelo) la optimiza por caminos que ya no producen lo que la métrica quería medir, como un sistema que mejora su número sin mejorar el resultado real. Con un modelo pasa lo mismo: si se elige solo por la exactitud, gana el que predice siempre "no es fraude" (95 % en el Ejercicio 2) aunque no detecte ningún fraude. Una sola métrica, sin mirar qué errores comete el modelo ni cuánto cuestan, puede premiar al modelo equivocado.
 
 ## Pregunta de apertura
 
 La sesión pasada elegiste el modelo con menor error sobre los 595 viajes de prueba. ¿Cuánto cambiaría ese error si la división hubiera sido otra? ¿Lo viste en algún lado del registro?
 
-_(tu respuesta)_
+Cambiaría casi tanto como la diferencia entre modelos, y sí se vio en el registro de la sesión pasada: el mismo gradient boosting dio **1.2754** con la semilla de división 42 y **1.1867** con la semilla 7. Hoy la validación cruzada lo confirma: con 5 pliegues al azar, sus errores van de 1.16 a 1.28 (desviación 0.036). Elegir por un solo número de 595 viajes puede depender más de la suerte de la división que del modelo.
 
 ## Ejercicio 1: tres formas de validar el mismo modelo
 
@@ -34,23 +34,23 @@ Notebook: [`starter/ejercicio1_validacion.ipynb`](./starter/ejercicio1_validacio
 
 **Respuesta 1 (TODO 1):** con una sola división, el gradient boosting dio 1.2754 y el bosque 1.3016. Con 5 pliegues al azar, ¿esperas que los cinco errores del gradient boosting sean parecidos entre sí? ¿Cuánto esperas que varíen?
 
-_(tu respuesta)_
+Parecidos, pero no iguales: cada pliegue valida con 595 viajes distintos. Esperaba que variaran unos pocos centavos alrededor de 1.25, como la diferencia entre las semillas 42 y 7 de la sesión pasada (0.09). Salieron entre **1.16 y 1.28**, con desviación **0.036**.
 
 **Respuesta 2 (TODO 2):** en la validación temporal, cada pliegue entrena con los viajes anteriores y valida con los siguientes. ¿Esperas un error mayor o menor que con pliegues al azar? ¿Por qué?
 
-_(tu respuesta)_
+**Mayor.** Con pliegues al azar, el modelo entrena con viajes de todas las fechas, incluidos algunos posteriores a los que valida; en la validación temporal solo ve el pasado, y el futuro puede traer patrones que no vio (otros días, otro tráfico). Además, los primeros pliegues entrenan con pocos datos. Es más pesimista, pero más parecida a lo que pasa en producción. Salió **1.3099** contra 1.2288 al azar, con el doble de desviación (0.069).
 
 **Respuesta 3 (TODO 3):** en la validación por zona, ninguna zona de origen aparece a la vez en entrenamiento y en validación. ¿Qué pliegue crees que va a tener el peor error?
 
-_(tu respuesta)_
+El que deja afuera **JFK Airport**: sus viajes son largos y muchos tienen la tarifa fija de 70 dólares, así que no se parecen a nada de lo que el modelo ve en las zonas de Manhattan. Así fue: el pliegue 5 (Brooklyn y JFK Airport) tuvo un MAE de **6.43**, mientras los otros cuatro quedaron entre 1.19 y 1.31.
 
 **Respuesta 4 (TODO 4):** la app muestra una tarifa estimada antes del viaje, y el pasajero reclama si la real sale más de 20% por encima. ¿Qué métrica dice mejor cuántos reclamos va a haber: el MAE, el RMSE, o el porcentaje de viajes subestimados en más de 20%?
 
-_(tu respuesta)_
+El **porcentaje de viajes subestimados en más de 20 %**, porque cuenta exactamente los casos que generan un reclamo. El MAE y el RMSE mezclan sobreestimar y subestimar, y no dicen cuántos viajes cruzan el límite del 20 %: un MAE de 1.28 dólares puede esconder unos pocos viajes muy subestimados. Con el gradient boosting, el **4.4 %** de los viajes de prueba (26 de 595) sale más de 20 % por encima de lo estimado.
 
 **Lo que confirmó la tabla, esquema por esquema:**
 
-_(anota el promedio, la desviación y el peor pliegue de cada esquema)_
+Al azar, gradient boosting: promedio **1.2288**, desviación **0.0361**, peor pliegue **1.28**. Al azar, bosque: **1.2880**, **0.0291**, peor **1.34**. Temporal, gradient boosting: **1.3099**, **0.0693**, peor **1.40**. Por zona, gradient boosting: **2.2996**, **2.0648**, peor **6.43** (el pliegue de Brooklyn y JFK Airport). Con la división de prueba: MAE **1.2754**, RMSE **1.9213** y 4.4 % de viajes subestimados en más de 20 %.
 
 ## Durante los ConcepTests
 
@@ -80,19 +80,19 @@ Solo o en pareja. Notebook: [`starter/ejercicio2_fraude_y_umbral.ipynb`](./start
 
 **Respuesta 1:** ¿qué accuracy tiene la línea base que nunca predice fraude? ¿Y qué recall?
 
-_(tu respuesta)_
+Accuracy **0.9508** y recall **0**: acierta el 95 % porque el 95 % de los pagos son legítimos, pero no detecta ni uno de los 295 fraudes.
 
 **Respuesta 2:** ¿cuánto mejora la accuracy del gradient boosting sobre la línea base, y cuánto mejora el recall? ¿Cuál de los dos números describe mejor lo que gana la empresa?
 
-_(tu respuesta)_
+La accuracy mejora apenas **2 puntos** (de 0.9508 a 0.9712); el recall pasa de **0 a 0.461**: detecta casi la mitad de los fraudes, y con precisión de 0.905 (9 de cada 10 alarmas son fraudes reales). El **recall** describe mejor lo que gana la empresa, porque cada fraude detectado es un contracargo de 40 dólares que no se paga; la accuracy casi no se mueve porque los fraudes son pocos.
 
 **Respuesta 3:** con el umbral 0.5, ¿cuántos fraudes deja pasar el gradient boosting? ¿Qué umbral eligió el paso 5, y cuántos fraudes y falsas alarmas tiene con ese umbral?
 
-_(tu respuesta)_
+Con el umbral 0.5 deja pasar **159** fraudes de 295 (detecta 136) y da 14 falsas alarmas. El paso 5 eligió el umbral **0.10**: deja pasar **122** fraudes y da **222** falsas alarmas, con un costo de 5.546 dólares frente a 6.402 con el umbral 0.5. Conviene aceptar muchas más falsas alarmas (3 dólares cada una) para detectar más fraudes (40 dólares cada uno).
 
 **Si terminas antes:** si la revisión manual de una falsa alarma costara 20 dólares en vez de 3, ¿el umbral elegido sube o baja? Cambia la constante y comprueba.
 
-_(tu respuesta)_
+**Sube**, de 0.10 a **0.50**. Con 20 dólares por falsa alarma, las 222 falsas alarmas del umbral 0.10 cuestan 4.440 dólares, y el costo total pasa a 9.320; con el umbral 0.50 (159 fraudes sin detectar y 14 falsas alarmas) cuesta 6.640, el menor de la lista. Cuando las falsas alarmas son caras, conviene que el modelo marque solo los pagos de los que está muy seguro.
 
 ## Ejercicio 3: la validación y la métrica de tu proyecto
 
@@ -130,4 +130,4 @@ Elegí el **costo de los errores en dólares**. Una falla sin aviso cuesta unos 
 
 La app de taxis usa dos modelos: uno estima la tarifa antes de pedir el viaje, otro decide si un pago es fraude. ¿Alguno de los dos se podría calcular una vez por noche para todos los casos posibles? ¿Cuál tiene que responder en el momento, y en cuánto tiempo?
 
-_(tu respuesta)_
+La **tarifa** sí se podría calcular de noche, pero solo para casos conocidos de antemano, como los viajes reservados para el día siguiente; las combinaciones posibles de origen, destino, hora y distancia son demasiadas para precalcularlas todas, así que un viaje que se pide en el momento necesita una respuesta en línea en menos de un segundo, mientras el pasajero mira la pantalla. El **fraude** tiene que responder en el momento del cobro, en milisegundos (unos 100 a 200 ms), si se quiere detener el pago antes de que pase; si basta con revisarlo después, se puede puntuar por lotes cada noche con los pagos del día, como en la Semana 12.

@@ -1,0 +1,4 @@
+solucion,ap_prueba,auc_prueba,segundos_entrenamiento,parametros,ap_10_ssd
+bosque min_samples_leaf=2,0.5003,0.8619,2.32,,0.9429
+red neuronal 32-16,0.3593,0.8102,7.34,1281.0,0.7862
+LLM (Claude Opus 5.5),,,,,0.6111

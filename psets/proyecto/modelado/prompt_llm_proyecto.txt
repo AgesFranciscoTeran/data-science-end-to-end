@@ -1,0 +1,45 @@
+Cada linea es la lectura SMART de un SSD de un centro de datos (contadores crudos: r_5 sectores reasignados, r_187 errores no corregibles, r_197 sectores pendientes, r_199 errores CRC, n_wearout desgaste normalizado, r_12 encendidos; app es la aplicacion del servidor). En toda la flota falla cerca del 6 % de los discos, pero en las listas de abajo la mitad fallo.
+
+Ejemplos con su resultado (failure=1 si el disco fallo):
+app=none, r_5=26.0, r_183=0.0, r_184=0.0, r_187=27.0, r_195=0.0, r_197=0.0, r_199=0.0, r_program=0.0, r_erase=0.0, n_wearout=96.0, r_12=27.0, r_174=22.0 -> failure=1
+app=WSM, r_5=1.0, r_183=0.0, r_184=0.0, r_187=0.0, r_195=0.0, r_197=0.0, r_199=0.0, r_program=1.0, r_erase=0.0, n_wearout=89.0, r_12=52.0, r_174=26.0 -> failure=0
+app=WSM, r_5=2.0, r_183=0.0, r_184=0.0, r_187=0.0, r_195=0.0, r_197=0.0, r_199=0.0, r_program=2.0, r_erase=0.0, n_wearout=94.0, r_12=18.0, r_174=12.0 -> failure=1
+app=WSM, r_5=1.0, r_183=0.0, r_184=0.0, r_187=0.0, r_195=0.0, r_197=0.0, r_199=0.0, r_program=1.0, r_erase=0.0, n_wearout=93.0, r_12=42.0, r_174=24.0 -> failure=1
+app=WSM, r_5=2.0, r_183=0.0, r_184=0.0, r_187=0.0, r_195=0.0, r_197=0.0, r_199=0.0, r_program=2.0, r_erase=0.0, n_wearout=77.0, r_12=18.0, r_174=14.0 -> failure=1
+app=RM, r_5=1.0, r_183=0.0, r_184=0.0, r_187=0.0, r_195=0.0, r_197=0.0, r_199=0.0, r_program=0.0, r_erase=0.0, n_wearout=36.0, r_12=38.0, r_174=30.0 -> failure=1
+app=WSM, r_5=0.0, r_183=0.0, r_184=0.0, r_187=0.0, r_195=0.0, r_197=0.0, r_199=0.0, r_program=0.0, r_erase=0.0, n_wearout=98.0, r_12=23.0, r_174=19.0 -> failure=0
+app=none, r_5=0.0, r_183=0.0, r_184=0.0, r_187=0.0, r_195=0.0, r_197=0.0, r_199=0.0, r_program=0.0, r_erase=0.0, n_wearout=100.0, r_12=35.0, r_174=11.0 -> failure=0
+app=WSM, r_5=0.0, r_183=0.0, r_184=0.0, r_187=0.0, r_195=0.0, r_197=0.0, r_199=0.0, r_program=0.0, r_erase=0.0, n_wearout=90.0, r_12=38.0, r_174=16.0 -> failure=0
+app=WSM, r_5=1.0, r_183=0.0, r_184=0.0, r_187=0.0, r_195=0.0, r_197=0.0, r_199=0.0, r_program=1.0, r_erase=0.0, n_wearout=87.0, r_12=33.0, r_174=20.0 -> failure=0
+app=none, r_5=0.0, r_183=0.0, r_184=0.0, r_187=0.0, r_195=0.0, r_197=0.0, r_199=0.0, r_program=0.0, r_erase=0.0, n_wearout=97.0, r_12=28.0, r_174=16.0 -> failure=1
+app=WSM, r_5=0.0, r_183=0.0, r_184=0.0, r_187=0.0, r_195=0.0, r_197=0.0, r_199=0.0, r_program=0.0, r_erase=0.0, n_wearout=99.0, r_12=16.0, r_174=15.0 -> failure=1
+app=WSM, r_5=0.0, r_183=0.0, r_184=0.0, r_187=0.0, r_195=0.0, r_197=0.0, r_199=0.0, r_program=0.0, r_erase=0.0, n_wearout=95.0, r_12=26.0, r_174=24.0 -> failure=0
+app=none, r_5=6663.0, r_183=0.0, r_184=0.0, r_187=0.0, r_195=0.0, r_197=0.0, r_199=0.0, r_program=0.0, r_erase=0.0, n_wearout=100.0, r_12=17.0, r_174=13.0 -> failure=1
+app=none, r_5=0.0, r_183=0.0, r_184=0.0, r_187=0.0, r_195=0.0, r_197=0.0, r_199=0.0, r_program=0.0, r_erase=0.0, n_wearout=100.0, r_12=48.0, r_174=43.0 -> failure=0
+app=WSM, r_5=0.0, r_183=0.0, r_184=0.0, r_187=0.0, r_195=0.0, r_197=0.0, r_199=0.0, r_program=0.0, r_erase=0.0, n_wearout=91.0, r_12=27.0, r_174=21.0 -> failure=1
+app=none, r_5=0.0, r_183=0.0, r_184=0.0, r_187=0.0, r_195=0.0, r_197=0.0, r_199=0.0, r_program=0.0, r_erase=0.0, n_wearout=100.0, r_12=16.0, r_174=9.0 -> failure=0
+app=WSM, r_5=0.0, r_183=0.0, r_184=0.0, r_187=0.0, r_195=0.0, r_197=0.0, r_199=0.0, r_program=0.0, r_erase=0.0, n_wearout=83.0, r_12=24.0, r_174=10.0 -> failure=0
+app=WSM, r_5=0.0, r_183=0.0, r_184=0.0, r_187=0.0, r_195=0.0, r_197=0.0, r_199=0.0, r_program=0.0, r_erase=0.0, n_wearout=99.0, r_12=38.0, r_174=36.0 -> failure=1
+app=NAS, r_5=0.0, r_183=0.0, r_184=0.0, r_187=0.0, r_195=0.0, r_197=0.0, r_199=0.0, r_program=0.0, r_erase=0.0, n_wearout=98.0, r_12=16.0, r_174=12.0 -> failure=0
+app=WSM, r_5=1.0, r_183=0.0, r_184=0.0, r_187=0.0, r_195=0.0, r_197=0.0, r_199=0.0, r_program=1.0, r_erase=0.0, n_wearout=98.0, r_12=21.0, r_174=18.0 -> failure=1
+app=WSM, r_5=0.0, r_183=0.0, r_184=0.0, r_187=0.0, r_195=0.0, r_197=0.0, r_199=0.0, r_program=0.0, r_erase=0.0, n_wearout=95.0, r_12=20.0, r_174=10.0 -> failure=1
+app=WSM, r_5=0.0, r_183=0.0, r_184=0.0, r_187=0.0, r_195=0.0, r_197=0.0, r_199=0.0, r_program=0.0, r_erase=0.0, n_wearout=90.0, r_12=13.0, r_174=3.0 -> failure=1
+app=WSM, r_5=1.0, r_183=0.0, r_184=0.0, r_187=0.0, r_195=0.0, r_197=0.0, r_199=0.0, r_program=1.0, r_erase=0.0, n_wearout=100.0, r_12=23.0, r_174=11.0 -> failure=0
+app=RM, r_5=0.0, r_183=0.0, r_184=0.0, r_187=0.0, r_195=0.0, r_197=0.0, r_199=0.0, r_program=0.0, r_erase=0.0, n_wearout=100.0, r_12=36.0, r_174=28.0 -> failure=0
+app=NAS, r_5=23.0, r_183=0.0, r_184=0.0, r_187=0.0, r_195=0.0, r_197=0.0, r_199=0.0, r_program=0.0, r_erase=0.0, n_wearout=100.0, r_12=18.0, r_174=14.0 -> failure=1
+app=WSM, r_5=1.0, r_183=0.0, r_184=0.0, r_187=0.0, r_195=0.0, r_197=0.0, r_199=0.0, r_program=1.0, r_erase=0.0, n_wearout=91.0, r_12=37.0, r_174=14.0 -> failure=0
+app=WSM, r_5=0.0, r_183=0.0, r_184=0.0, r_187=0.0, r_195=0.0, r_197=0.0, r_199=0.0, r_program=0.0, r_erase=0.0, n_wearout=95.0, r_12=20.0, r_174=16.0 -> failure=0
+app=none, r_5=136.0, r_183=0.0, r_184=0.0, r_187=2012.0, r_195=0.0, r_197=0.0, r_199=0.0, r_program=0.0, r_erase=0.0, n_wearout=100.0, r_12=17.0, r_174=13.0 -> failure=1
+app=WSM, r_5=0.0, r_183=0.0, r_184=0.0, r_187=0.0, r_195=0.0, r_197=0.0, r_199=0.0, r_program=0.0, r_erase=0.0, n_wearout=91.0, r_12=29.0, r_174=21.0 -> failure=0
+
+Para cada uno de estos 10 discos, responde solo la probabilidad de que haya fallado, un numero entre 0 y 1 por linea, en el mismo orden, sin texto adicional:
+1. app=WSM, r_5=1.0, r_183=0.0, r_184=0.0, r_187=0.0, r_195=0.0, r_197=0.0, r_199=0.0, r_program=0.0, r_erase=0.0, n_wearout=91.0, r_12=19.0, r_174=17.0
+2. app=none, r_5=10.0, r_183=0.0, r_184=0.0, r_187=0.0, r_195=0.0, r_197=0.0, r_199=0.0, r_program=0.0, r_erase=0.0, n_wearout=100.0, r_12=23.0, r_174=20.0
+3. app=none, r_5=22.0, r_183=0.0, r_184=0.0, r_187=800.0, r_195=0.0, r_197=0.0, r_199=0.0, r_program=1.0, r_erase=0.0, n_wearout=96.0, r_12=28.0, r_174=20.0
+4. app=WSM, r_5=0.0, r_183=0.0, r_184=0.0, r_187=0.0, r_195=0.0, r_197=0.0, r_199=0.0, r_program=0.0, r_erase=0.0, n_wearout=95.0, r_12=17.0, r_174=10.0
+5. app=WSM, r_5=0.0, r_183=0.0, r_184=0.0, r_187=0.0, r_195=0.0, r_197=0.0, r_199=0.0, r_program=0.0, r_erase=0.0, n_wearout=97.0, r_12=18.0, r_174=9.0
+6. app=WSM, r_5=0.0, r_183=0.0, r_184=0.0, r_187=0.0, r_195=0.0, r_197=0.0, r_199=0.0, r_program=0.0, r_erase=0.0, n_wearout=91.0, r_12=26.0, r_174=19.0
+7. app=WPS, r_5=0.0, r_183=0.0, r_184=0.0, r_187=0.0, r_195=0.0, r_197=0.0, r_199=0.0, r_program=0.0, r_erase=0.0, n_wearout=96.0, r_12=21.0, r_174=16.0
+8. app=WSM, r_5=0.0, r_183=0.0, r_184=0.0, r_187=0.0, r_195=0.0, r_197=0.0, r_199=0.0, r_program=0.0, r_erase=0.0, n_wearout=92.0, r_12=38.0, r_174=22.0
+9. app=WSM, r_5=0.0, r_183=0.0, r_184=0.0, r_187=0.0, r_195=0.0, r_197=0.0, r_199=0.0, r_program=0.0, r_erase=0.0, n_wearout=87.0, r_12=35.0, r_174=18.0
+10. app=WSM, r_5=0.0, r_183=0.0, r_184=0.0, r_187=0.0, r_195=0.0, r_197=0.0, r_199=0.0, r_program=0.0, r_erase=0.0, n_wearout=96.0, r_12=23.0, r_174=11.0
