@@ -49,3 +49,6 @@ _to_delete/
 
 # Dataset del proyecto que arma preparar_datos.py (Semana 8): se regenera
 ssd_mc1.csv
+
+# Metadatos del modelo exportado por psets/proyecto/servicio/exportar_modelo.py (se regenera)
+psets/proyecto/servicio/modelo.json

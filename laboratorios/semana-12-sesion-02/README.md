@@ -126,11 +126,18 @@ En `proyecto/README.md`, agrega la sección **Cómo correr el servicio**: cómo 
 
 **¿Qué datos recibe tu servicio, y cuáles de tus features calcula él mismo? ¿Cómo sabes que las calcula igual que en el entrenamiento?**
 
-_(tu respuesta)_
+Recibe la lectura SMART del día de un SSD como la reporta el disco: `disk_id`, la `app` del servidor y los 12 contadores crudos (`r_5`, `r_183`, `r_184`, `r_187`, `r_195`, `r_197`, `r_199`, `r_program`, `r_erase`, `n_wearout`, `r_12`, `r_174`), todos opcionales, sin negativos y con al menos uno presente. El servicio calcula las dos features derivadas: `n_contadores_error` (cuántos de `r_5`, `r_187`, `r_197` y `r_199` están por encima de 0) y `log_r_5`. Sé que las calcula igual por dos razones. Primero, `servicio/api.py` importa `agregar_features` de `modelado/pipeline_proyecto.py`, la misma función con que se entrenó, en vez de copiarla. Segundo, la prueba `test_el_servicio_calcula_las_features_igual_que_el_entrenamiento` comprueba que lo que el servicio le pasa al modelo es exactamente lo que `agregar_features` produce para la misma fila. Además, el modelo exportado es el pipeline completo (imputación, escalado y codificación de `app` incluidos), así que esa parte tampoco se reescribe.
 
 **Pega una petición a tu servicio corriendo en el contenedor, y su respuesta:**
 
-_(tu respuesta)_
+Contenedor construido desde `psets/proyecto/` con `docker build -f servicio/Dockerfile -t servicio-ssd .` y levantado con `docker run -p 8000:8000 servicio-ssd`, con el modelo exportado de la corrida `5ab7a7cd78bd482ea2333f03602b3922`:
+
+```
+curl -X POST localhost:8000/predecir -H "Content-Type: application/json" -d '{"disk_id": 88935, "app": "RM", "r_5": 8, "r_183": 0, "r_184": 0, "r_187": 112, "r_195": 0, "r_197": 0, "r_199": 2, "r_program": 0, "r_erase": 0, "n_wearout": 100, "r_12": 24, "r_174": 19}'
+{"disk_id":88935,"probabilidad_falla":0.7907,"revisar":true,"run_id":"5ab7a7cd78bd482ea2333f03602b3922"}
+```
+
+Ese SSD falló en 2018. Un SSD sano (`disk_id` 100048, todos los contadores de error en 0) recibió `{"probabilidad_falla":0.1378,"revisar":true}`: con el umbral 0.10, que minimiza el costo, va a revisión como falsa alarma. Una lectura sin ningún contador recibió 422 (`"La lectura no trae ningun contador SMART"`).
 
 ## Antes de la próxima sesión
 
