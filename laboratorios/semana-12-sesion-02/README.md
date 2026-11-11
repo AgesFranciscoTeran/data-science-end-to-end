@@ -16,17 +16,17 @@ A partir de la lectura previa:
 
 **Según el artículo, ¿qué pasos separan un modelo entrenado en un notebook de un modelo que otra aplicación puede usar?**
 
-_(tu respuesta)_
+Cuatro pasos. (1) **Guardar el modelo entrenado** en un archivo (con `pickle` o `joblib`), con la preparación incluida, para no reentrenar cada vez. (2) **Envolverlo en una API web**: un servicio que recibe los datos de entrada por HTTP, valida que tengan la forma correcta, calcula las features, llama al modelo y devuelve la predicción como JSON. (3) **Empaquetarlo en un contenedor** con sus dependencias. (4) **Desplegarlo en un servidor o en la nube**, donde otra aplicación lo llama por su dirección, y vigilar que siga respondiendo. Entre medio están las pruebas del contrato de la API: que acepte lo que debe y rechace lo que no.
 
 **¿Para qué usa el artículo un contenedor, si el servicio ya corre en la máquina de quien lo escribió?**
 
-_(tu respuesta)_
+Porque correr en la máquina de quien lo escribió no garantiza que corra en otra. El servicio depende de una versión de Python y de librerías exactas (un modelo guardado con joblib solo carga con la misma versión de scikit-learn), y de archivos que están a su lado. El contenedor empaqueta todo eso junto con el modelo, así que la misma imagen corre igual en la laptop, en el servidor y en la nube, sin el "en mi máquina sí funciona". Además permite levantar varias copias del servicio cuando llegan más peticiones. Lo vimos hoy: dentro del contenedor, el servicio corre con scikit-learn 1.5.2 aunque la máquina tenga otra versión.
 
 ## Pregunta de apertura
 
 La sesión pasada, la app leía las tarifas de una tabla calculada de noche. Cuando un pasajero escribe un destino que no estaba reservado, no hay ninguna fila que leer. ¿Qué tendría que existir para que la app le pregunte al modelo en ese momento, y qué le mandaría?
 
-_(tu respuesta)_
+Tendría que existir un **servicio en línea**: un proceso que corre todo el tiempo con el modelo ya cargado en memoria y expone una ruta HTTP (por ejemplo `POST /predecir`). Cuando el pasajero elige el destino, la app le manda lo que sabe del viaje antes de que empiece: la fecha y hora, la zona de origen y la de destino, la distancia estimada, los pasajeros y el método de pago. El servicio calcula el resto de las features con las mismas funciones del entrenamiento (la hora como seno y coseno, si es hora pico, si es tarifa fija al aeropuerto) y responde la tarifa en milisegundos, mientras el pasajero mira la pantalla.
 
 ## Ejercicio 1: la tarifa, como servicio
 
@@ -145,4 +145,4 @@ Ese SSD falló en 2018. Un SSD sano (`disk_id` 100048, todos los contadores de e
 
 Tu servicio carga `modelo.joblib`, el archivo que exportaste hoy. Si la semana que viene reentrenas y vuelves a exportar, el archivo se reemplaza. Si mañana un usuario reclama por una predicción de hoy, ¿cómo sabrías qué modelo la produjo? ¿Y cómo volverías al modelo anterior si el nuevo resulta peor?
 
-_(tu respuesta)_
+Para saber qué modelo produjo una predicción, cada respuesta tiene que llevar su identificador. Mi servicio ya lo hace a medias: `exportar_modelo.py` guarda el `run_id` de MLflow en `modelo.json`, y el servicio lo devuelve en `/salud` y en cada respuesta de `/predecir`. Si quien llama guarda la respuesta completa (o el servicio registra cada petición con su `run_id` y su hora), ante un reclamo se busca la predicción y su `run_id` dice exactamente qué corrida la produjo, con sus datos, parámetros y métricas. Para volver al modelo anterior, como MLflow guarda todas las corridas, basta con exportar el `run_id` anterior (`python servicio/exportar_modelo.py <run_id_anterior>`), reconstruir la imagen y reiniciar el contenedor. Mejor aún: etiquetar cada imagen con su `run_id` (`servicio-ssd:5ab7a7cd`), para que volver atrás sea solo levantar la imagen anterior, o usar el registro de modelos de MLflow con versiones y un alias como `produccion`, que se mueve de una versión a otra sin tocar el código.
