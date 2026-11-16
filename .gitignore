@@ -52,3 +52,8 @@ ssd_mc1.csv
 
 # Metadatos del modelo exportado por psets/proyecto/servicio/exportar_modelo.py (se regenera)
 psets/proyecto/servicio/modelo.json
+
+# Registros del servicio y del monitoreo (Semana 13): se regeneran al correr
+predicciones.jsonl
+cobros.csv
+modelo_version.txt
